@@ -80,7 +80,7 @@ int	handle_64(char *ptr)
 			break ;
 		}
 
-			lc = (void *)lc + lc->cmdsize;
+	       	lc = (void *)lc + lc->cmdsize;
 
 	}
 
@@ -95,21 +95,37 @@ int	handle_64_text(char *ptr)
 	struct load_command		*lc;
 	struct symtab_command	*sym;
 	struct segment_command_64   *seg;
-
+	struct section_64 *section;
 
 	header = (struct mach_header_64 *)ptr;
 	ncmds = header->ncmds;
 	lc = (void *)ptr + sizeof(*header);
+	// printf("%s\n", SEG_TEXT);
 	for (i = 0; i < ncmds; i++) {
-		if (lc->cmd == LC_SYMTAB)
-		{
-			sym = (struct symtab_command *)lc;
-			print_outpout(sym->nsyms, sym->symoff, sym->stroff, ptr);
+	//  printf("cmd: %u%c",lc->cmd, 10);
+	  if (lc->cmd == LC_SEGMENT_64)
+	  {
 
-			break ;
-		}
+	       seg = (struct segment_command_64*)lc;
+				//  printf("%s\n", seg->segname);
+	       if (strcmp(seg->segname,SEG_TEXT) == 0)
+				 {
+					 printf("nb section %d\n", seg->nsects);
+					 section = (void *)seg + sizeof(*seg);
+					 printf("section name: %s\n", section->sectname);
+					 printf("section addr: %016llx\n", section->addr);
+					 printf("section value: %s\n", ((void*)ptr + section->offset));
+					 printf("section value: %s\n", (char *)seg->vmaddr);
 
-			lc = (void *)lc + lc->cmdsize;
+					 section = (void *)section + section->size;
+					 printf("section name 2: %s\n", section->sectname);
+					 printf("section addr 2: %016llx\n", section->addr);
+					 printf("section value 2: %s\n", ((void*)ptr + section->offset));
+				 }
+
+	  }
+
+      	lc = (void *)lc + lc->cmdsize;
 
 	}
 
@@ -125,7 +141,7 @@ int	nm(char *ptr)
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC_64)
 	{
-		handle_64(ptr);
+	  //handle_64(ptr);
 		handle_64_text(ptr);
 	}
 	printf("%d\n", magic_number);

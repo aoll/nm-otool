@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 
 int	print_outpout(int nsyms, int symoff, int stroff, void *ptr)
@@ -87,6 +88,71 @@ int	handle_64(char *ptr)
 	return (EXIT_SUCCESS);
 }
 
+/*
+** Print a pointeur adresse with hex'format
+*/
+
+static void				ft_print_adress(long double adr)
+{
+	long int	simple;
+	long double	d;
+
+	simple = adr / 16;
+	d = adr / 16 - simple;
+	if (simple > 0)
+	{
+		ft_print_adress(simple);
+	}
+	simple = d * 16;
+	if (simple > 9)
+	{
+		simple = 65 + simple - 10;
+	}
+	else
+	{
+		simple += '0';
+	}
+	write(1, &simple, 1);
+	return ;
+}
+
+int print_text_text_section(char *ptr, int size)
+{
+	size_t len;
+	int a;
+	int j = 0;
+
+	// len = (size_t)(ptr + size);
+	// if (j % 10 == 0)
+	// {
+	// 	ft_print_adress((size_t)ptr);
+	// 	write(1, "          ", 10);
+	// }
+	while (j < size)
+	{
+		// if (j % 10 == 0)
+		// {
+		// 	printf("%016llx         ", (size_t)ptr);
+		// }
+		printf("%02X ", *ptr);
+		// return (0);
+		j++;
+		if (j == 21) {
+			printf("\n");
+			return (0);
+		}
+		if (j % 10 == 0)
+		{
+			printf("\n");
+		}
+
+
+		ptr++;
+
+ 	}
+	return (EXIT_SUCCESS);
+}
+
 int	handle_64_text(char *ptr)
 {
 	int						ncmds;
@@ -96,6 +162,7 @@ int	handle_64_text(char *ptr)
 	struct symtab_command	*sym;
 	struct segment_command_64   *seg;
 	struct section_64 *section;
+
 
 	header = (struct mach_header_64 *)ptr;
 	ncmds = header->ncmds;
@@ -113,14 +180,43 @@ int	handle_64_text(char *ptr)
 					 printf("nb section %d\n", seg->nsects);
 					 section = (void *)seg + sizeof(*seg);
 					 printf("section name: %s\n", section->sectname);
-					 printf("section addr: %016llx\n", section->addr);
-					 printf("section value: %s\n", ((void*)ptr + section->offset));
-					 printf("section value: %s\n", (char *)seg->vmaddr);
-
-					 section = (void *)section + section->size;
+					 printf("section addr: %016llX\n", section->addr);
+					//  ptr = (void*)ptr + section->offset;
+					//  printf("section value: %s\n", ptr);
+					// print_text_text_section((void*)ptr, section->size);
+					print_text_text_section((void*)ptr + section->offset, section->size);
+					return (0);
+					 printf("section size: %llu\n", section->size);
+					 int j = 0;
+					 while (j < section->size) {
+					 	int a;
+						a = *(ptr + j);
+						printf("%02x ", a);
+						j++;
+					 }
+					//  ptr = (void*)ptr + section->offset;
+					//  printf("section value: %s\n", ptr);
+					//  printf("section value: %s\n", (char *)seg->vmaddr);
+					 puts("------");
+					 section = (void *)section + sizeof(*section);
 					 printf("section name 2: %s\n", section->sectname);
 					 printf("section addr 2: %016llx\n", section->addr);
 					 printf("section value 2: %s\n", ((void*)ptr + section->offset));
+					 puts("------");
+					 section = (void *)section + sizeof(*section);
+					 printf("section name 3: %s\n", section->sectname);
+					 printf("section addr 3: %016llx\n", section->addr);
+					 printf("section value 3: %s\n", ((void*)ptr + section->offset));
+					 puts("------");
+					 section = (void *)section + sizeof(*section);
+					 printf("section name 4: %s\n", section->sectname);
+					 printf("section addr 4: %016llx\n", section->addr);
+					 printf("section value 4: %s\n", ((void*)ptr + section->offset));
+					 puts("------");
+					 section = (void *)section + sizeof(*section);
+					 printf("section name 5: %s\n", section->sectname);
+					 printf("section addr 5: %016llx\n", section->addr);
+					 printf("section value 5: %s\n", ((void*)ptr + section->offset));
 				 }
 
 	  }
@@ -144,7 +240,6 @@ int	nm(char *ptr)
 	  //handle_64(ptr);
 		handle_64_text(ptr);
 	}
-	printf("%d\n", magic_number);
 	return (EXIT_SUCCESS);
 }
 

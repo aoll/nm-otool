@@ -116,12 +116,14 @@ static void				ft_print_adress(long double adr)
 	return ;
 }
 
-int print_text_text_section(char *ptr, int size)
+int print_text_text_section(void *ptr, long double addr, int size)
 {
 	size_t len;
 	int a;
 	int j = 0;
+	void *tmp;
 
+	tmp = ptr;
 	// len = (size_t)(ptr + size);
 	// if (j % 10 == 0)
 	// {
@@ -130,23 +132,28 @@ int print_text_text_section(char *ptr, int size)
 	// }
 	while (j < size)
 	{
-		// if (j % 10 == 0)
-		// {
-		// 	printf("%016llx         ", (size_t)ptr);
-		// }
-		printf("%02X ", *ptr);
-		// return (0);
+		if (j % 16 == 0)
+		{
+
+			ft_print_adress(addr);
+			// ft_print_adress((size_t)ptr);
+			write(1, "    ", 4);
+			// printf(" %016llX         ", ptr);
+		}
+		// printf("%d ", *(unsigned char *)ptr);
+		ft_print_adress(*(unsigned char *)ptr);
+		write(1, "  ", 2);
 		j++;
 		if (j == 21) {
 			printf("\n");
 			return (0);
 		}
-		if (j % 10 == 0)
+		if (j % 16 == 0)
 		{
 			printf("\n");
 		}
 
-
+		addr++;
 		ptr++;
 
  	}
@@ -181,10 +188,11 @@ int	handle_64_text(char *ptr)
 					 section = (void *)seg + sizeof(*seg);
 					 printf("section name: %s\n", section->sectname);
 					 printf("section addr: %016llX\n", section->addr);
-					//  ptr = (void*)ptr + section->offset;
-					//  printf("section value: %s\n", ptr);
-					// print_text_text_section((void*)ptr, section->size);
-					print_text_text_section((void*)ptr + section->offset, section->size);
+			
+
+
+
+					print_text_text_section((void*)ptr + section->offset, section->addr, section->size);
 					return (0);
 					 printf("section size: %llu\n", section->size);
 					 int j = 0;

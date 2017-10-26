@@ -48,7 +48,7 @@ int	print_outpout(int nsyms, int symoff, int stroff, void *ptr)
 			printf("%016llx %s %s\n",array[i].n_value ,type, stringtable + array[i].n_un.n_strx);
 		else
 		{
-			printf("%s %s %s\n","                " ,type, stringtable + array[i].n_un.n_strx);
+			printf("%s %s %s\n", "                " ,type, stringtable + array[i].n_un.n_strx);
 		}
 		// if (array[i].n_sect)
 		// {
@@ -188,7 +188,7 @@ int	handle_64_text(char *ptr)
 					 section = (void *)seg + sizeof(*seg);
 					 printf("section name: %s\n", section->sectname);
 					 printf("section addr: %016llX\n", section->addr);
-			
+
 
 
 

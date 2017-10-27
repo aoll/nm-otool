@@ -10,15 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <sys/mman.h>
-#include <mach-o/loader.h>
-#include <mach-o/nlist.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include "ft_otool.h"
 
 
 int	print_outpout(int nsyms, int symoff, int stroff, void *ptr)
@@ -106,7 +98,7 @@ static void				ft_print_adress(long double adr)
 	simple = d * 16;
 	if (simple > 9)
 	{
-		simple = 65 + simple - 10;
+		simple = 97 + simple - 10;
 	}
 	else
 	{
@@ -124,21 +116,22 @@ int print_text_text_section(void *ptr, long double addr, int size)
 	void *tmp;
 
 	tmp = ptr;
+	write(1, CONTENT_TEXT_TEXT, strlen(CONTENT_TEXT_TEXT));
 	while (j < size)
 	{
 		if (j % 16 == 0)
 		{
+			write(1, "0000000", 7);
 			ft_print_adress(addr);
-			write(1, "    ", 4);
+			write(1, "\t", 1);
+		}
+		if (*(unsigned char *)ptr < 0x10)
+		{
+			write(1, "0", 1);
 		}
 		ft_print_adress(*(unsigned char *)ptr);
-		write(1, "  ", 2);
+		write(1, " ", 1);
 		j++;
-		if (j == 21)
-		{
-			write(1, "\n", 1);
-			return (0);
-		}
 		if (j % 16 == 0)
 		{
 			write(1, "\n", 1);
@@ -146,6 +139,7 @@ int print_text_text_section(void *ptr, long double addr, int size)
 		addr++;
 		ptr++;
  	}
+	write(1, "\n", 1);
 	return (EXIT_SUCCESS);
 }
 
@@ -174,26 +168,29 @@ struct segment_command_64 *ft_find_segment_64(
 {
 	struct segment_command_64	*seg;
 	int							i;
+	int							nb_seg;
 
 	i = 0;
+	nb_seg = 0;
 	while (i < ncmds)
 	{
-	  if (lc->cmd == LC_SEGMENT_64)
-	  {
-		  seg = (struct segment_command_64*)lc;
-		  if (strcmp(seg->segname, segment_name) == 0)
-		  {
-			  return (seg);
-		  }
-	  }
-	  lc = (void *)lc + lc->cmdsize;
-	  i++;
+		if (lc->cmd == LC_SEGMENT_64)
+		{
+			seg = (struct segment_command_64*)lc;
+			if (strcmp(seg->segname, segment_name) == 0 || ncmds == 1)
+			{
+				return (seg);
+			}
+			nb_seg++;
+		}
+		lc = (void *)lc + lc->cmdsize;
+		i++;
 	}
-	return (NULL);
+	return (seg);
 }
 
-struct section_64 *ft_find_segment_section_64(
-	char *ptr, struct mach_header_64 *header, char *segment_name, char *section_name)
+struct section_64 *ft_find_segment_section_64(char *ptr,
+	struct mach_header_64 *header, char *segment_name, char *section_name)
 {
 	struct load_command			*lc;
 	struct segment_command_64	*seg;
@@ -207,30 +204,58 @@ struct section_64 *ft_find_segment_section_64(
 	return (section);
 }
 
-int	handle_64_text(char *ptr)
+int	handle_64_text(char *ptr, char *av)
 {
 	struct mach_header_64		*header;
 	struct section_64			*section;
 
 	header = (struct mach_header_64 *)ptr;
-	if (!(section = ft_find_segment_section_64(ptr, header, SEG_TEXT, SECT_TEXT)))
+	printf("cmds : %d\n", header->ncmds);
+	if (!(section = ft_find_segment_section_64(
+		ptr, header, SEG_TEXT, SECT_TEXT)))
 		return (EXIT_FAILURE);
-	print_text_text_section((void*)ptr + section->offset, section->addr, section->size);
+	write(1, av, strlen(av));
+	write(1, ":\n", 2);
+	print_text_text_section(
+		(void*)ptr + section->offset, section->addr, section->size);
 	return (EXIT_SUCCESS);
 }
 
 
 
-int	nm(char *ptr)
+int	ft_nm(char *ptr)
 {
 	int magic_number;
 
 	magic_number = *(int *)ptr;
+	printf("magic_number: %d\n", magic_number);
 	if (magic_number == MH_MAGIC_64)
 	{
-	  //handle_64(ptr);
-		handle_64_text(ptr);
+		handle_64(ptr);
+		// write(1, "\n---\n", 6);
+		// handle_64_text(ptr);
 	}
+	return (EXIT_SUCCESS);
+}
+
+int	ft_otool(char *ptr, char *av)
+{
+	int magic_number;
+
+	magic_number = *(int *)ptr;
+	printf("magic_number: %x\n", magic_number);
+	magic_number = *(int *)ptr;
+	if (magic_number == MH_MAGIC_64)
+	{
+		handle_64_text(ptr, av);
+	}
+	struct ar_hdr	*ar;
+
+	ar = (struct ar_hdr *)ptr;
+	printf("fh : %s\n", ar->ar_size);
+	// struct mach_header_64		*header;
+	// header = (struct mach_header_64 *)ptr;
+	// printf("cmds : %d\n", header->ncmds);
 	return (EXIT_SUCCESS);
 }
 
@@ -260,7 +285,8 @@ int	main(int ac, char **av) {
 		perror("mmap");
 		return (EXIT_FAILURE);
 	}
-	nm(ptr);
+	// ft_nm(ptr);
+	ft_otool(ptr, av[1]);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");

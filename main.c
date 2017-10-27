@@ -124,23 +124,13 @@ int print_text_text_section(void *ptr, long double addr, int size)
 	void *tmp;
 
 	tmp = ptr;
-	// len = (size_t)(ptr + size);
-	// if (j % 10 == 0)
-	// {
-	// 	ft_print_adress((size_t)ptr);
-	// 	write(1, "          ", 10);
-	// }
 	while (j < size)
 	{
 		if (j % 16 == 0)
 		{
-
 			ft_print_adress(addr);
-			// ft_print_adress((size_t)ptr);
 			write(1, "    ", 4);
-			// printf(" %016llX         ", ptr);
 		}
-		// printf("%d ", *(unsigned char *)ptr);
 		ft_print_adress(*(unsigned char *)ptr);
 		write(1, "  ", 2);
 		j++;
@@ -152,12 +142,21 @@ int print_text_text_section(void *ptr, long double addr, int size)
 		{
 			printf("\n");
 		}
-
 		addr++;
 		ptr++;
 
  	}
 	return (EXIT_SUCCESS);
+}
+
+struct section_64 *ft_find_section_64(char *ptr)
+{
+	struct load_command		*lc;
+	struct segment_command_64   *seg;
+	struct section_64 *section;
+
+
+	return (NULL);
 }
 
 int	handle_64_text(char *ptr)
@@ -166,65 +165,32 @@ int	handle_64_text(char *ptr)
 	int						i;
 	struct mach_header_64	*header;
 	struct load_command		*lc;
-	struct symtab_command	*sym;
 	struct segment_command_64   *seg;
 	struct section_64 *section;
 
 
 	header = (struct mach_header_64 *)ptr;
 	ncmds = header->ncmds;
-	lc = (void *)ptr + sizeof(*header);
-	// printf("%s\n", SEG_TEXT);
+	lc = (void *)ptr + sizeof(struct mach_header_64);
 	for (i = 0; i < ncmds; i++) {
-	//  printf("cmd: %u%c",lc->cmd, 10);
 	  if (lc->cmd == LC_SEGMENT_64)
 	  {
-
 	       seg = (struct segment_command_64*)lc;
-				//  printf("%s\n", seg->segname);
 	       if (strcmp(seg->segname,SEG_TEXT) == 0)
 				 {
-					 printf("nb section %d\n", seg->nsects);
+					 int loop = 0;
 					 section = (void *)seg + sizeof(*seg);
-					 printf("section name: %s\n", section->sectname);
-					 printf("section addr: %016llX\n", section->addr);
-
-
-
-
-					print_text_text_section((void*)ptr + section->offset, section->addr, section->size);
-					return (0);
-					 printf("section size: %llu\n", section->size);
-					 int j = 0;
-					 while (j < section->size) {
-					 	int a;
-						a = *(ptr + j);
-						printf("%02x ", a);
-						j++;
+					 while (loop < seg->nsects) {
+					 	if (!strcmp(section->sectname, SECT_TEXT)) {
+					 		print_text_text_section((void*)ptr + section->offset, section->addr, section->size);
+							break;
+					 	}
+						section = (void *)seg + sizeof(*seg);
+						loop++;
 					 }
-					//  ptr = (void*)ptr + section->offset;
-					//  printf("section value: %s\n", ptr);
-					//  printf("section value: %s\n", (char *)seg->vmaddr);
-					 puts("------");
-					 section = (void *)section + sizeof(*section);
-					 printf("section name 2: %s\n", section->sectname);
-					 printf("section addr 2: %016llx\n", section->addr);
-					 printf("section value 2: %s\n", ((void*)ptr + section->offset));
-					 puts("------");
-					 section = (void *)section + sizeof(*section);
-					 printf("section name 3: %s\n", section->sectname);
-					 printf("section addr 3: %016llx\n", section->addr);
-					 printf("section value 3: %s\n", ((void*)ptr + section->offset));
-					 puts("------");
-					 section = (void *)section + sizeof(*section);
-					 printf("section name 4: %s\n", section->sectname);
-					 printf("section addr 4: %016llx\n", section->addr);
-					 printf("section value 4: %s\n", ((void*)ptr + section->offset));
-					 puts("------");
-					 section = (void *)section + sizeof(*section);
-					 printf("section name 5: %s\n", section->sectname);
-					 printf("section addr 5: %016llx\n", section->addr);
-					 printf("section value 5: %s\n", ((void*)ptr + section->offset));
+
+					return (0);
+
 				 }
 
 	  }

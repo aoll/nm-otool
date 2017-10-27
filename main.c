@@ -243,19 +243,56 @@ int	ft_otool(char *ptr, char *av)
 	int magic_number;
 
 	magic_number = *(int *)ptr;
-	printf("magic_number: %x\n", magic_number);
+	// printf("magic_number: %x\n", magic_number);
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC_64)
 	{
 		handle_64_text(ptr, av);
 	}
+
+	// ptr += 200;
+
+	printf("%s\n", (void *)ptr + 180);
+
+	struct mach_header_64 *ht;
+
+	ht = (void *)ptr + 200;
+
+	printf("ptr : %d\n", ht->ncmds);
+	return (0);
 	struct ar_hdr	*ar;
 
-	ar = (struct ar_hdr *)ptr;
-	printf("fh : %s\n", ar->ar_size);
+	ar = (void *)ptr + SARMAG;
+
+	write(1,ar->ar_name, 16 );
+	write(1,"\n", 1);
+	write(1,ar->ar_size, 10 );
+	write(1,"\n", 1);
+
+	// printf("fh : %s\n", ar->ar_name );
+	// printf("fh : %s\n", ar->ar_size );
+
+	struct	ranlib *ran;
+
+	ran = (void*)ptr + sizeof(*ar) + SARMAG + 1812;
+
+
+	//
+	// h = ((void *)ptr +sizeof(struct	ranlib) + 100644);
+	// printf("h : %d\n", h->ncmds);
+	// ran = (struct	ranlib *) ((void *)ptr + sizeof(struct ar_hdr *));
+	printf("%u\n", ran[0].ran_off);
+	printf("%u\n", ran[1].ran_off);
+
+	// printf("%u\n", ran[0].ran_un.ran_strx);
+	// printf("%s\n", (void *)ptr + ran->ran_un.ran_strx);
+
+	// printf("%s\n", (void *)ptr + ran->ran_off);
+	// h = (struct mach_header_64 *)(void *)ptr + ran->ran_off;
+	// printf("%s\n", ran->ran_un.ran_name);
 	// struct mach_header_64		*header;
 	// header = (struct mach_header_64 *)ptr;
-	// printf("cmds : %d\n", header->ncmds);
+	// printf("cmds : %d\n", h->ncmds);
 	return (EXIT_SUCCESS);
 }
 

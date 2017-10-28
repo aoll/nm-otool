@@ -210,7 +210,7 @@ int	handle_64_text(char *ptr, char *av)
 	struct section_64			*section;
 
 	header = (struct mach_header_64 *)ptr;
-	printf("cmds : %d\n", header->ncmds);
+	// printf("cmds : %d\n", header->ncmds);
 	if (!(section = ft_find_segment_section_64(
 		ptr, header, SEG_TEXT, SECT_TEXT)))
 		return (EXIT_FAILURE);
@@ -228,7 +228,7 @@ int	ft_nm(char *ptr)
 	int magic_number;
 
 	magic_number = *(int *)ptr;
-	printf("magic_number: %d\n", magic_number);
+	// printf("magic_number: %d\n", magic_number);
 	if (magic_number == MH_MAGIC_64)
 	{
 		handle_64(ptr);
@@ -268,25 +268,39 @@ int	ft_otool(char *ptr, char *av)
 
 	// write(1,ar->ar_name, 16 );
 	// write(1,"\n", 1);
-	write(1,ar->ar_size, 10 );
-	write(1,"\n", 1);
+
+	// write(1,ar->ar_size, 10 );
+	// write(1,"\n", 1);
 
 	ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
-	write(1,ar->ar_size, 10 );
-	write(1,"\n", 1);
-	write(1,(void*)ar + sizeof(*ar), strlen((void*)ar + sizeof(*ar)) );
-	printf("%s\n", (void*)ar + sizeof(*ar));
-	write(1,"\n", 1);
+	// ar = (void *)ar + sizeof(ar->ar_name) + sizeof(*ar) + 4;
+
+	// write(1,ar->ar_size, 10 );
+	// write(1,"\n", 1);
+	// write(1,(void*)ar + sizeof(*ar), strlen((void*)ar + sizeof(*ar)) );
+	// printf("%s\n", (void*)ar + sizeof(*ar));
+	// write(1,"\n", 1);
 
 	struct	mach_header_64 *h;
-	printf("sizeof: %lu\n", sizeof(ar->ar_name));
+	// printf("sizeof: %lu\n", sizeof(ar->ar_name));
 	h = (void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4;
 	// printf("%ll016X\n", );
-	printf("h: %d\n", h->ncmds);
-	printf("s: %d\n", h->sizeofcmds);
-	// ft_otool((void*)ar + sizeof(*ar) + 16 + 4, "test");
+	// printf("h: %d\n", h->ncmds);
+	// printf("s: %d\n", h->sizeofcmds);
+
+	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ar->ar_name);
 
 
+	ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
+
+	h = (void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4;
+	// printf("%ll016X\n", );
+	// printf("h: %d\n", h->ncmds);
+	// printf("s: %d\n", h->sizeofcmds);
+	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ar->ar_name);
+
+	char c = 'a';
+	printf("c: %lu\n", sizeof(c));
 	return (0);
 	// printf("fh : %s\n", ar->ar_name );
 	// printf("fh : %s\n", ar->ar_size );

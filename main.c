@@ -209,7 +209,6 @@ int	handle_64_text(char *ptr, char *av)
 	struct section_64			*section;
 
 	header = (struct mach_header_64 *)ptr;
-	// printf("cmds : %d\n", header->ncmds);
 	if (!(section = ft_find_segment_section_64(
 		ptr, header, SEG_TEXT, SECT_TEXT)))
 		return (EXIT_FAILURE);
@@ -250,189 +249,73 @@ int	ft_ranlib(char *ptr)
 	return (0);
 }
 
+char	*ft_format_archive_name(char *n1, char *n2, char *n3, char *n4)
+{
+	char *s;
+	int len;
+
+	len = strlen(n1) + strlen(n2) + strlen(n3) + strlen(n4) + 1;
+	if (!(s = malloc(sizeof(char) * len)))
+	{
+		return (NULL);
+	}
+	s[len - 1] = '\0';
+	strcpy(s, n1);
+	strcpy(s + strlen(n1), n2);
+	strcpy(s + strlen(n1) + strlen(n2), n3);
+	strcpy(s + strlen(n1) + strlen(n2) + strlen(n3), n4);
+	return (s);
+
+}
+
+void ft_print_archive_name(char *s1, char *s2)
+{
+	write(1, s1, strlen(s1));
+	write(1, s2, strlen(s2));
+	write(1, "\n", 1);
+}
+
 
 int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 {
 	struct ar_hdr	*ar;
-	struct ar_hdr	*ar2;
-	void			*data;
 	int				len;
+	int				nb;
+	char			*archive_name;
 
+	ft_print_archive_name("Archive : ", av);
 	ar = (void *)ptr + SARMAG;
-	data = (void *)ptr + SARMAG + sizeof(*ar);
-	len = strlen((char *)data);
-
-	printf("data: %s\n", (char *)data);
-	printf("data size: %d\n", len);
-	printf("ar size: %d\n", atoi(ar->ar_size));
-
 	if ((len = atoi(ar->ar_size)) <= 0)
 		return (EXIT_FAILURE);
 	while ((char *)(ar = (void *)ar + sizeof(*ar) + len) < ptr_end)
 	{
 		if ((len = atoi(ar->ar_size)) <= 0)
 			return (EXIT_FAILURE);
-		int nb = atoi(ar->ar_name + strlen(AR_EFMT1));
-		printf("atoi: %d\n", atoi(ar->ar_name + strlen(AR_EFMT1)));
-		write(1, ar->ar_name, 16);
-		ft_otool((void *)ar + nb + sizeof(*ar), ptr_end, "test");
-
-		// printf("name %s\n", ar->ar_name);
-		// return (0);
+		nb = atoi(ar->ar_name + strlen(AR_EFMT1));
+		if (!(archive_name = ft_format_archive_name(
+			av, "(", (void *)ar + sizeof(*ar), ")")))
+			return (EXIT_FAILURE);
+		ft_otool((void *)ar + nb + sizeof(*ar), ptr_end, archive_name);
+		free(archive_name);
 	}
-	return (0);
-	printf("++ %lu\n", SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar));
-	ar2 = (void *)ptr + SARMAG + sizeof(*ar)  + atoi(ar->ar_size);
-	data = (void *)ptr + SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar);
-	len = strlen((char *)data);
-	printf("data: %s\n", (char *)data);
-	printf("data size: %d\n-----\n", len);
-	printf("len ar_name: %lu\n", strlen(ar2->ar_name));
-	printf("test%s\n", (void *)ar2 + 72);
-	ft_otool((void *)data + len + 8, ptr_end,"test");
-
-	printf("ar2 size: %d\n", atoi(ar2->ar_size));
-	printf("++ %lu\n", SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar) + atoi(ar2->ar_size) + sizeof(*ar) );
-
-	data = (void *)ptr + SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar) + atoi(ar2->ar_size) + sizeof(*ar);
-	len = strlen((char *)data);
-	printf("data: %s\n", (char *)data);
-	printf("data size: %d\n", len);
-	// printf("size: %lu\n", sizeof(*ar));
-	return (0);
-	// c4 = 196
-	// d8 = 216
-
-	// 39c = 924
-	// 3cc = 944
-
-	// 88 = 136
+	return (EXIT_SUCCESS);
 }
 
 int	ft_otool(char *ptr, char *ptr_end, char *av)
 {
 	int magic_number;
 
-	magic_number = *(int *)ptr;
-	// printf("magic_number: %x\n", magic_number);
+	if (ptr >= ptr_end)
+		return (EXIT_FAILURE);
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC_64)
 	{
 		handle_64_text(ptr, av);
-		return (0);
 	}
 	else if (!strncmp(ptr, ARMAG, SARMAG))
 	{
 		ft_ar_file(ptr, ptr_end, av);
 	}
-
-	return (0);
-	// ptr += 200;
-
-	// printf("%s\n", (void *)ptr + 180);
-	//
-	// struct mach_header_64 *ht;
-	//
-	// ht = (void *)ptr + 200;
-	//
-	// // printf("ptr : %d\n", ht->ncmds);
-	// return (0);
-
-
-	struct ar_hdr	*ar;
-
-	// ar = (void *)ptr ;
-	ar = (void *)ptr + SARMAG;
-
-	// write(1,ar->ar_name, 16 );
-	// write(1,"\n", 1);
-
-	// write(1,ar->ar_size, 10 );
-	// write(1,"\n", 1);
-	int len;
-
-	// len = atoi(ar->ar_size) / sizeof(struct ranlib *);
-	// printf("len: %d\n", len);
-
-	// ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
-
-	void* data = (char*)(ar + 1) + 20;
-
-	uint32_t ranlib_len = *(uint32_t*)data;
-
- 	uint32_t nranlibs = ranlib_len / sizeof(struct ranlib);
-	printf("nranlibs: %u\n", nranlibs);
- 	struct ranlib* ranlib = (struct ranlib*)(data + sizeof(uint32_t));
-
-	return (0);
-	// ar = (void *)ar + sizeof(ar->ar_name) + sizeof(*ar) + 4;
-
-	// write(1,ar->ar_size, 10 );
-	// write(1,"\n", 1);
-	// write(1,(void*)ar + sizeof(*ar), strlen((void*)ar + sizeof(*ar)) );
-	// printf("%s\n", (void*)ar + sizeof(*ar));
-	// write(1,"\n", 1);
-	// printf("name str: %s\n", (void *)ptr + ran[0].ran_un.ran_strx);
-
-	struct	mach_header_64 *h;
-	// printf("sizeof: %lu\n", sizeof(ar->ar_name));
-
-	// int l;
-	//
-	// l = 0;
-	// while (ran[l])
-	// {
-	// 	/* code */
-	// }
-
-	// h = (void*)ptr + ran[0].ran_off;
-	h = (void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4;
-
-	// printf("%ll016X\n", );
-	// printf("h: %d\n", h->ncmds);
-	// printf("s: %d\n", h->sizeofcmds);
-
-
-	// ft_otool((void*)ptr + ran[0].ran_off, "test");
-	// return (0);
-	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ptr_end, ar->ar_name);
-
-
-	ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
-
-	h = (void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4;
-	// printf("%ll016X\n", );
-	// printf("h: %d\n", h->ncmds);
-	// printf("s: %d\n", h->sizeofcmds);
-	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ptr_end, ar->ar_name);
-
-	char c = 'a';
-	printf("c: %lu\n", sizeof(c));
-	return (0);
-	// printf("fh : %s\n", ar->ar_name );
-	// printf("fh : %s\n", ar->ar_size );
-
-	// struct	ranlib *ran;
-	//
-	// ran = (void*)ptr + sizeof(*ar) + SARMAG + 1812;
-
-
-	//
-	// h = ((void *)ptr +sizeof(struct	ranlib) + 100644);
-	// printf("h : %d\n", h->ncmds);
-	// ran = (struct	ranlib *) ((void *)ptr + sizeof(struct ar_hdr *));
-	// printf("%u\n", ran[0].ran_off);
-	// printf("%u\n", ran[1].ran_off);
-
-	// printf("%u\n", ran[0].ran_un.ran_strx);
-	// printf("%s\n", (void *)ptr + ran->ran_un.ran_strx);
-
-	// printf("%s\n", (void *)ptr + ran->ran_off);
-	// h = (struct mach_header_64 *)(void *)ptr + ran->ran_off;
-	// printf("%s\n", ran->ran_un.ran_name);
-	// struct mach_header_64		*header;
-	// header = (struct mach_header_64 *)ptr;
-	// printf("cmds : %d\n", h->ncmds);
 	return (EXIT_SUCCESS);
 }
 

@@ -12,6 +12,7 @@
 
 #include "ft_otool.h"
 
+int	ft_otool(char *ptr, char *ptr_end, char *av);
 
 int	print_outpout(int nsyms, int symoff, int stroff, void *ptr)
 {
@@ -72,9 +73,7 @@ int	handle_64(char *ptr)
 
 			break ;
 		}
-
-	       	lc = (void *)lc + lc->cmdsize;
-
+		lc = (void *)lc + lc->cmdsize;
 	}
 
 	return (EXIT_SUCCESS);
@@ -238,7 +237,76 @@ int	ft_nm(char *ptr)
 	return (EXIT_SUCCESS);
 }
 
-int	ft_otool(char *ptr, char *av)
+int	ft_ranlib(char *ptr)
+{
+	struct ranlib* ranlib;
+	// void *ranlib;
+
+	ranlib = (void *)ptr + 88;
+	printf("ran: %u\n", *(uint32_t *)ranlib);
+
+	ranlib = (void *)ptr + 88 + sizeof(uint32_t);
+	printf("off %d\n", ranlib[0].ran_off);
+	return (0);
+}
+
+
+int	ft_ar_file(char *ptr, char *ptr_end, char *av)
+{
+	struct ar_hdr	*ar;
+	struct ar_hdr	*ar2;
+	void			*data;
+	int				len;
+
+
+	ar = (void *)ptr + SARMAG;
+	data = (void *)ptr + SARMAG + sizeof(*ar);
+	len = strlen((char *)data);
+
+	printf("data: %s\n", (char *)data);
+	printf("data size: %d\n", len);
+	printf("ar size: %d\n", atoi(ar->ar_size));
+
+	// ar = (void *)ar + sizeof(*ar) + atoi(ar->ar_size);
+	// printf("name %s\n", ar->ar_name);
+
+	while ((char *)(ar = (void *)ar + sizeof(*ar) + atoi(ar->ar_size)) < ptr_end)
+	{
+		// ar->ar_name[15] = '\0';
+		write(1, ar->ar_name, 16);
+		// printf("name %s\n", ar->ar_name);
+		// return (0);
+	}
+	return (0);
+	printf("++ %lu\n", SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar));
+	ar2 = (void *)ptr + SARMAG + sizeof(*ar)  + atoi(ar->ar_size);
+	data = (void *)ptr + SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar);
+	len = strlen((char *)data);
+	printf("data: %s\n", (char *)data);
+	printf("data size: %d\n-----\n", len);
+	printf("len ar_name: %lu\n", strlen(ar2->ar_name));
+	printf("test%s\n", (void *)ar2 + 72);
+	ft_otool((void *)data + len + 8, ptr_end,"test");
+
+	printf("ar2 size: %d\n", atoi(ar2->ar_size));
+	printf("++ %lu\n", SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar) + atoi(ar2->ar_size) + sizeof(*ar) );
+
+	data = (void *)ptr + SARMAG + sizeof(*ar) +  atoi(ar->ar_size) + sizeof(*ar) + atoi(ar2->ar_size) + sizeof(*ar);
+	len = strlen((char *)data);
+	printf("data: %s\n", (char *)data);
+	printf("data size: %d\n", len);
+	// printf("size: %lu\n", sizeof(*ar));
+	return (0);
+	// c4 = 196
+	// d8 = 216
+
+	// 39c = 924
+	// 3cc = 944
+
+	// 88 = 136
+}
+
+int	ft_otool(char *ptr, char *ptr_end, char *av)
 {
 	int magic_number;
 
@@ -250,7 +318,12 @@ int	ft_otool(char *ptr, char *av)
 		handle_64_text(ptr, av);
 		return (0);
 	}
+	else if (!strncmp(ptr, ARMAG, SARMAG))
+	{
+		ft_ar_file(ptr, ptr_end, av);
+	}
 
+	return (0);
 	// ptr += 200;
 
 	// printf("%s\n", (void *)ptr + 180);
@@ -261,6 +334,8 @@ int	ft_otool(char *ptr, char *av)
 	//
 	// // printf("ptr : %d\n", ht->ncmds);
 	// return (0);
+
+
 	struct ar_hdr	*ar;
 
 	// ar = (void *)ptr ;
@@ -271,8 +346,22 @@ int	ft_otool(char *ptr, char *av)
 
 	// write(1,ar->ar_size, 10 );
 	// write(1,"\n", 1);
+	int len;
 
-	ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
+	// len = atoi(ar->ar_size) / sizeof(struct ranlib *);
+	// printf("len: %d\n", len);
+
+	// ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
+
+	void* data = (char*)(ar + 1) + 20;
+
+	uint32_t ranlib_len = *(uint32_t*)data;
+
+ 	uint32_t nranlibs = ranlib_len / sizeof(struct ranlib);
+	printf("nranlibs: %u\n", nranlibs);
+ 	struct ranlib* ranlib = (struct ranlib*)(data + sizeof(uint32_t));
+
+	return (0);
 	// ar = (void *)ar + sizeof(ar->ar_name) + sizeof(*ar) + 4;
 
 	// write(1,ar->ar_size, 10 );
@@ -280,15 +369,30 @@ int	ft_otool(char *ptr, char *av)
 	// write(1,(void*)ar + sizeof(*ar), strlen((void*)ar + sizeof(*ar)) );
 	// printf("%s\n", (void*)ar + sizeof(*ar));
 	// write(1,"\n", 1);
+	// printf("name str: %s\n", (void *)ptr + ran[0].ran_un.ran_strx);
 
 	struct	mach_header_64 *h;
 	// printf("sizeof: %lu\n", sizeof(ar->ar_name));
+
+	// int l;
+	//
+	// l = 0;
+	// while (ran[l])
+	// {
+	// 	/* code */
+	// }
+
+	// h = (void*)ptr + ran[0].ran_off;
 	h = (void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4;
+
 	// printf("%ll016X\n", );
 	// printf("h: %d\n", h->ncmds);
 	// printf("s: %d\n", h->sizeofcmds);
 
-	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ar->ar_name);
+
+	// ft_otool((void*)ptr + ran[0].ran_off, "test");
+	// return (0);
+	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ptr_end, ar->ar_name);
 
 
 	ar = (void *)ar + atoi(ar->ar_size) + sizeof(*ar);
@@ -297,7 +401,7 @@ int	ft_otool(char *ptr, char *av)
 	// printf("%ll016X\n", );
 	// printf("h: %d\n", h->ncmds);
 	// printf("s: %d\n", h->sizeofcmds);
-	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ar->ar_name);
+	ft_otool((void*)ar + sizeof(*ar) + sizeof(ar->ar_name) + 4, ptr_end, ar->ar_name);
 
 	char c = 'a';
 	printf("c: %lu\n", sizeof(c));
@@ -356,7 +460,7 @@ int	main(int ac, char **av) {
 		return (EXIT_FAILURE);
 	}
 	// ft_nm(ptr);
-	ft_otool(ptr, av[1]);
+	ft_otool(ptr, (void *)ptr + buf.st_size, av[1]);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");

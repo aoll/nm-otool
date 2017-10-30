@@ -258,7 +258,6 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 	void			*data;
 	int				len;
 
-
 	ar = (void *)ptr + SARMAG;
 	data = (void *)ptr + SARMAG + sizeof(*ar);
 	len = strlen((char *)data);
@@ -267,13 +266,17 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 	printf("data size: %d\n", len);
 	printf("ar size: %d\n", atoi(ar->ar_size));
 
-	// ar = (void *)ar + sizeof(*ar) + atoi(ar->ar_size);
-	// printf("name %s\n", ar->ar_name);
-
-	while ((char *)(ar = (void *)ar + sizeof(*ar) + atoi(ar->ar_size)) < ptr_end)
+	if ((len = atoi(ar->ar_size)) <= 0)
+		return (EXIT_FAILURE);
+	while ((char *)(ar = (void *)ar + sizeof(*ar) + len) < ptr_end)
 	{
-		// ar->ar_name[15] = '\0';
+		if ((len = atoi(ar->ar_size)) <= 0)
+			return (EXIT_FAILURE);
+		int nb = atoi(ar->ar_name + strlen(AR_EFMT1));
+		printf("atoi: %d\n", atoi(ar->ar_name + strlen(AR_EFMT1)));
 		write(1, ar->ar_name, 16);
+		ft_otool((void *)ar + nb + sizeof(*ar), ptr_end, "test");
+
 		// printf("name %s\n", ar->ar_name);
 		// return (0);
 	}

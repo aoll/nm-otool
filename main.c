@@ -107,34 +107,36 @@ static void				ft_print_adress(long double adr)
 	return ;
 }
 
+void	ft_print_padding_adresse(long double addr)
+{
+	char	*s;
+
+	s = ft_itoa(addr);
+	write(1, "0000000000000000", 16 - ft_strlen(s));
+	ft_print_adress(addr);
+	write(1, "\t", 1);
+}
+
+
 int print_text_text_section(void *ptr, long double addr, int size)
 {
-	size_t len;
-	int a;
-	int j = 0;
-	void *tmp;
+	size_t	len;
+	int		a;
+	int		j;
 
-	tmp = ptr;
-	write(1, CONTENT_TEXT_TEXT, strlen(CONTENT_TEXT_TEXT));
+	j = 0;
+	write(1, CONTENT_TEXT_TEXT, ft_strlen(CONTENT_TEXT_TEXT));
 	while (j < size)
 	{
 		if (j % 16 == 0)
-		{
-			write(1, "0000000", 7);
-			ft_print_adress(addr);
-			write(1, "\t", 1);
-		}
+			ft_print_padding_adresse(addr);
 		if (*(unsigned char *)ptr < 0x10)
-		{
 			write(1, "0", 1);
-		}
 		ft_print_adress(*(unsigned char *)ptr);
 		write(1, " ", 1);
 		j++;
 		if (j % 16 == 0)
-		{
 			write(1, "\n", 1);
-		}
 		addr++;
 		ptr++;
  	}
@@ -212,7 +214,7 @@ int	handle_64_text(char *ptr, char *av)
 	if (!(section = ft_find_segment_section_64(
 		ptr, header, SEG_TEXT, SECT_TEXT)))
 		return (EXIT_FAILURE);
-	write(1, av, strlen(av));
+	write(1, av, ft_strlen(av));
 	write(1, ":\n", 2);
 	print_text_text_section(
 		(void*)ptr + section->offset, section->addr, section->size);
@@ -254,24 +256,24 @@ char	*ft_format_archive_name(char *n1, char *n2, char *n3, char *n4)
 	char *s;
 	int len;
 
-	len = strlen(n1) + strlen(n2) + strlen(n3) + strlen(n4) + 1;
+	len = ft_strlen(n1) + ft_strlen(n2) + ft_strlen(n3) + ft_strlen(n4) + 1;
 	if (!(s = malloc(sizeof(char) * len)))
 	{
 		return (NULL);
 	}
 	s[len - 1] = '\0';
 	strcpy(s, n1);
-	strcpy(s + strlen(n1), n2);
-	strcpy(s + strlen(n1) + strlen(n2), n3);
-	strcpy(s + strlen(n1) + strlen(n2) + strlen(n3), n4);
+	strcpy(s + ft_strlen(n1), n2);
+	strcpy(s + ft_strlen(n1) + ft_strlen(n2), n3);
+	strcpy(s + ft_strlen(n1) + ft_strlen(n2) + ft_strlen(n3), n4);
 	return (s);
 
 }
 
 void ft_print_archive_name(char *s1, char *s2)
 {
-	write(1, s1, strlen(s1));
-	write(1, s2, strlen(s2));
+	write(1, s1, ft_strlen(s1));
+	write(1, s2, ft_strlen(s2));
 	write(1, "\n", 1);
 }
 
@@ -291,7 +293,7 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 	{
 		if ((len = atoi(ar->ar_size)) <= 0)
 			return (EXIT_FAILURE);
-		nb = atoi(ar->ar_name + strlen(AR_EFMT1));
+		nb = atoi(ar->ar_name + ft_strlen(AR_EFMT1));
 		if (!(archive_name = ft_format_archive_name(
 			av, "(", (void *)ar + sizeof(*ar), ")")))
 			return (EXIT_FAILURE);

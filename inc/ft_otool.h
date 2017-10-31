@@ -18,5 +18,5 @@
 #include "libft.h"
 
 #define CONTENT_TEXT_TEXT "Contents of (__TEXT,__text) section\n"
-
+#define PADDING_STR "0000000000000000"
 #endif

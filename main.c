@@ -107,14 +107,42 @@ static void				ft_print_adress(long double adr)
 	return ;
 }
 
-void	ft_print_padding_adresse(long double addr)
+void			ft_get_adress_str(long double adr, char **dest, int index)
 {
-	char	*s;
+	long int	simple;
+	long double	d;
+	char		*s;
 
-	s = ft_itoa(addr);
-	write(1, "0000000000000000", 16 - ft_strlen(s));
-	ft_print_adress(addr);
+	if (index < 0)
+		return ;
+	simple = adr / 16;
+	d = adr / 16 - simple;
+	if (simple > 0)
+		ft_get_adress_str(simple, dest, index - 1);
+	simple = d * 16;
+	if (simple > 9)
+	{
+		simple = 97 + simple - 10;
+	}
+	else
+	{
+		simple += '0';
+	}
+	s = *dest;
+	s[index] = (int)simple;
+	return ;
+}
+
+void	ft_print_padding_adresse(long int addr, size_t len_padding)
+{
+	char	*addr_str;
+
+	addr_str = ft_strdup(PADDING_STR);
+	if (addr > 0)
+		ft_get_adress_str(addr, &addr_str, len_padding - 1);
+	write(1, addr_str, len_padding);
 	write(1, "\t", 1);
+	free(addr_str);
 }
 
 
@@ -125,11 +153,12 @@ int print_text_text_section(void *ptr, long double addr, int size)
 	int		j;
 
 	j = 0;
+	len = ft_strlen(PADDING_STR);
 	write(1, CONTENT_TEXT_TEXT, ft_strlen(CONTENT_TEXT_TEXT));
 	while (j < size)
 	{
 		if (j % 16 == 0)
-			ft_print_padding_adresse(addr);
+			ft_print_padding_adresse(addr, len);
 		if (*(unsigned char *)ptr < 0x10)
 			write(1, "0", 1);
 		ft_print_adress(*(unsigned char *)ptr);

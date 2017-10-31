@@ -216,6 +216,11 @@ struct section	*ft_find_section(
 	return (NULL);
 }
 
+int	ft_check_load()
+{
+	return (EXIT_SUCCESS);
+}
+
 struct segment_command_64 *ft_find_segment_64(
 	char *ptr, struct load_command *lc, int ncmds, char *segment_name)
 {
@@ -414,7 +419,7 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 
 uint32_t	swap_uint32(uint32_t val)
 {
-	val = ((val << 8) & 0xFF00FF00 ) | ((val >> 8) & 0xFF00FF );
+	val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
 	return (val << 16) | (val >> 16);
 }
 
@@ -424,38 +429,16 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av)
 	struct fat_header	*f_h;
 	struct fat_arch		*f_a;
 	int					nb_arch;
+	int					offset;
 
 	f_h = (struct fat_header *)ptr;
-
-	// printf("nb: %d\n", swap_uint32(f_h->nfat_arch));
 	nb_arch = swap_uint32(f_h->nfat_arch);
 	f_a = (void *)f_h + sizeof(*f_h);
-	int offset = 0;
+	offset = 0;
 	while (nb_arch)
 	{
-
-		// int cpusubtype = f_a->cpusubtype;
-		int cpusubtype = swap_uint32(f_a->cpusubtype);
-		int cputype = swap_uint32(f_a->cputype);
-
-		// printf("cputype: %d\n", cputype);
-		// printf("cpusubtype: %d\n", cpusubtype);
-		// printf("CPU_TYPE_X86_64: %d\n", CPU_TYPE_X86_64);
-		// printf("%s\n", "----------");
-
-		// printf("RUN SUB TYPE SWAP: %d\n", swap_uint32(f_a->cpusubtype));
-		// printf("RUN SUB TYPE: %d\n", f_a->cpusubtype);
-		// printf("RUN  TYPE: %d\n", swap_uint32(f_a->cputype));
-
-		// printf("RUN 2 SUB TYPE: %d\n", f_a->cpusubtype);
-		// printf("RUN 2  TYPE: %d\n", f_a->cputype);
-		//
-		// printf("type: %d\n", CPU_TYPE_X86_64);
-		// printf("type sub: %d\n", CPU_SUBTYPE_X86_64_ALL);
-		if (cputype == CPU_TYPE_X86_64)
+		if (swap_uint32(f_a->cputype) == CPU_TYPE_X86_64)
 		{
-			// 		printf("RUN SUB TYPE SWAP: %d\n", cpusubtype);
-			// printf("%s\n", "yo");
 			offset = swap_uint32(f_a->offset);
 			if (offset >= 0)
 			{
@@ -498,6 +481,7 @@ int	main(int ac, char **av) {
 	int			fd;
 	char		*ptr;
 	struct stat	buf;
+	int			ret;
 
 	if (ac != 2)
 	{
@@ -521,11 +505,11 @@ int	main(int ac, char **av) {
 		return (EXIT_FAILURE);
 	}
 	// ft_nm(ptr);
-	ft_otool(ptr, (void *)ptr + buf.st_size, av[1]);
+	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1]);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");
 		return (EXIT_FAILURE);
 	}
-	return (EXIT_SUCCESS);
+	return (ret);
 }

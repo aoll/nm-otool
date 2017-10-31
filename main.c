@@ -430,13 +430,37 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av)
 	// printf("nb: %d\n", swap_uint32(f_h->nfat_arch));
 	nb_arch = swap_uint32(f_h->nfat_arch);
 	f_a = (void *)f_h + sizeof(*f_h);
+	int offset = 0;
 	while (nb_arch)
 	{
-		// printf("off: %d\n", swap_uint32(f_a->offset));
-		printf("TYPE: %d\n", f_a->cpusubtype);
-		// printf("DEFI: %d\n", CPU_TYPE_X86_64);
-		if (f_a->cpusubtype == 50331776) {
-			ft_otool(ptr + swap_uint32(f_a->offset), ptr_end, av);
+
+		// int cpusubtype = f_a->cpusubtype;
+		int cpusubtype = swap_uint32(f_a->cpusubtype);
+		int cputype = swap_uint32(f_a->cputype);
+
+		// printf("cputype: %d\n", cputype);
+		// printf("cpusubtype: %d\n", cpusubtype);
+		// printf("CPU_TYPE_X86_64: %d\n", CPU_TYPE_X86_64);
+		// printf("%s\n", "----------");
+
+		// printf("RUN SUB TYPE SWAP: %d\n", swap_uint32(f_a->cpusubtype));
+		// printf("RUN SUB TYPE: %d\n", f_a->cpusubtype);
+		// printf("RUN  TYPE: %d\n", swap_uint32(f_a->cputype));
+
+		// printf("RUN 2 SUB TYPE: %d\n", f_a->cpusubtype);
+		// printf("RUN 2  TYPE: %d\n", f_a->cputype);
+		//
+		// printf("type: %d\n", CPU_TYPE_X86_64);
+		// printf("type sub: %d\n", CPU_SUBTYPE_X86_64_ALL);
+		if (cputype == CPU_TYPE_X86_64)
+		{
+			// 		printf("RUN SUB TYPE SWAP: %d\n", cpusubtype);
+			// printf("%s\n", "yo");
+			offset = swap_uint32(f_a->offset);
+			if (offset >= 0)
+			{
+				return (ft_otool(ptr + offset, ptr_end, av));
+			}
 		}
 		f_a = (void *)f_a + sizeof(*f_a);
 		nb_arch--;

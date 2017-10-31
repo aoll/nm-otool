@@ -133,11 +133,12 @@ void			ft_get_adress_str(long double adr, char **dest, int index)
 	return ;
 }
 
-void	ft_print_padding_adresse(long int addr, size_t len_padding)
+void	ft_print_padding_adresse(
+	long int addr, size_t len_padding, char *padding)
 {
 	char	*addr_str;
 
-	addr_str = ft_strdup(PADDING_STR);
+	addr_str = ft_strdup(padding);
 	if (addr > 0)
 		ft_get_adress_str(addr, &addr_str, len_padding - 1);
 	write(1, addr_str, len_padding);
@@ -146,19 +147,20 @@ void	ft_print_padding_adresse(long int addr, size_t len_padding)
 }
 
 
-int print_text_text_section(void *ptr, long double addr, int size)
+int print_text_text_section(void *ptr, long double addr, int size, int is64)
 {
 	size_t	len;
 	int		a;
 	int		j;
 
 	j = 0;
-	len = ft_strlen(PADDING_STR);
+	len = is64 ? ft_strlen(PADDING_STR_64) : ft_strlen(PADDING_STR);
 	write(1, CONTENT_TEXT_TEXT, ft_strlen(CONTENT_TEXT_TEXT));
 	while (j < size)
 	{
 		if (j % 16 == 0)
-			ft_print_padding_adresse(addr, len);
+			ft_print_padding_adresse(
+				addr, len, is64 ? PADDING_STR_64 : PADDING_STR);
 		if (*(unsigned char *)ptr < 0x10)
 			write(1, "0", 1);
 		ft_print_adress(*(unsigned char *)ptr);
@@ -178,6 +180,26 @@ struct section_64 *ft_find_section_64(
 	char *ptr, struct segment_command_64 *segment, char *section_name)
 {
 	struct section_64			*section;
+	int							loop;
+
+	loop = 0;
+	section = (void *)segment + sizeof(*segment);
+	while (loop < segment->nsects)
+	{
+		if (!strcmp(section->sectname, section_name))
+		{
+			return (section);
+		}
+		section = (void *)section + sizeof(*section);
+		loop++;
+	}
+	return (NULL);
+}
+
+struct section	*ft_find_section(
+	char *ptr, struct segment_command *segment, char *section_name)
+{
+	struct section			*section;
 	int							loop;
 
 	loop = 0;
@@ -220,6 +242,32 @@ struct segment_command_64 *ft_find_segment_64(
 	return (seg);
 }
 
+struct segment_command *ft_find_segment(
+	char *ptr, struct load_command *lc, int ncmds, char *segment_name)
+{
+	struct segment_command	*seg;
+	int						i;
+	int						nb_seg;
+
+	i = 0;
+	nb_seg = 0;
+	while (i < ncmds)
+	{
+		if (lc->cmd == LC_SEGMENT)
+		{
+			seg = (struct segment_command*)lc;
+			if (strcmp(seg->segname, segment_name) == 0 || ncmds == 1)
+			{
+				return (seg);
+			}
+			nb_seg++;
+		}
+		lc = (void *)lc + lc->cmdsize;
+		i++;
+	}
+	return (seg);
+}
+
 struct section_64 *ft_find_segment_section_64(char *ptr,
 	struct mach_header_64 *header, char *segment_name, char *section_name)
 {
@@ -231,6 +279,21 @@ struct section_64 *ft_find_segment_section_64(char *ptr,
 	if (!(seg = ft_find_segment_64(ptr, lc, header->ncmds, segment_name)))
 		return (NULL);
 	if (!(section = ft_find_section_64(ptr, seg, section_name)))
+		return (NULL);
+	return (section);
+}
+
+struct section *ft_find_segment_section(char *ptr,
+	struct mach_header *header, char *segment_name, char *section_name)
+{
+	struct load_command			*lc;
+	struct segment_command	*seg;
+	struct section			*section;
+
+	lc = (void *)ptr + sizeof(*header);
+	if (!(seg = ft_find_segment(ptr, lc, header->ncmds, segment_name)))
+		return (NULL);
+	if (!(section = ft_find_section(ptr, seg, section_name)))
 		return (NULL);
 	return (section);
 }
@@ -247,7 +310,23 @@ int	handle_64_text(char *ptr, char *av)
 	write(1, av, ft_strlen(av));
 	write(1, ":\n", 2);
 	print_text_text_section(
-		(void*)ptr + section->offset, section->addr, section->size);
+		(void*)ptr + section->offset, section->addr, section->size, 1);
+	return (EXIT_SUCCESS);
+}
+
+int	handle_text(char *ptr, char *av)
+{
+	struct mach_header		*header;
+	struct section			*section;
+
+	header = (struct mach_header *)ptr;
+	if (!(section = ft_find_segment_section(
+		ptr, header, SEG_TEXT, SECT_TEXT)))
+		return (EXIT_FAILURE);
+	write(1, av, ft_strlen(av));
+	write(1, ":\n", 2);
+	print_text_text_section(
+		(void*)ptr + section->offset, section->addr, section->size, 0);
 	return (EXIT_SUCCESS);
 }
 
@@ -354,7 +433,11 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av)
 	while (nb_arch)
 	{
 		// printf("off: %d\n", swap_uint32(f_a->offset));
-		ft_otool(ptr + swap_uint32(f_a->offset), ptr_end, av);
+		printf("TYPE: %d\n", f_a->cpusubtype);
+		// printf("DEFI: %d\n", CPU_TYPE_X86_64);
+		if (f_a->cpusubtype == 50331776) {
+			ft_otool(ptr + swap_uint32(f_a->offset), ptr_end, av);
+		}
 		f_a = (void *)f_a + sizeof(*f_a);
 		nb_arch--;
 	}
@@ -368,7 +451,11 @@ int	ft_otool(char *ptr, char *ptr_end, char *av)
 	if (ptr >= ptr_end)
 		return (EXIT_FAILURE);
 	magic_number = *(int *)ptr;
-	if (magic_number == MH_MAGIC_64)
+	if (magic_number == MH_MAGIC)
+	{
+		handle_text(ptr, av);
+	}
+	else if (magic_number == MH_MAGIC_64)
 	{
 		handle_64_text(ptr, av);
 	}

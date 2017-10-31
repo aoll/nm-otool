@@ -169,7 +169,8 @@ int print_text_text_section(void *ptr, long double addr, int size)
 		addr++;
 		ptr++;
  	}
-	write(1, "\n", 1);
+	if (j % 16 != 0)
+		write(1, "\n", 1);
 	return (EXIT_SUCCESS);
 }
 
@@ -332,6 +333,34 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 	return (EXIT_SUCCESS);
 }
 
+uint32_t	swap_uint32(uint32_t val)
+{
+	val = ((val << 8) & 0xFF00FF00 ) | ((val >> 8) & 0xFF00FF );
+	return (val << 16) | (val >> 16);
+}
+
+
+int	ft_fat_file(char *ptr, char *ptr_end, char *av)
+{
+	struct fat_header	*f_h;
+	struct fat_arch		*f_a;
+	int					nb_arch;
+
+	f_h = (struct fat_header *)ptr;
+
+	// printf("nb: %d\n", swap_uint32(f_h->nfat_arch));
+	nb_arch = swap_uint32(f_h->nfat_arch);
+	f_a = (void *)f_h + sizeof(*f_h);
+	while (nb_arch)
+	{
+		// printf("off: %d\n", swap_uint32(f_a->offset));
+		ft_otool(ptr + swap_uint32(f_a->offset), ptr_end, av);
+		f_a = (void *)f_a + sizeof(*f_a);
+		nb_arch--;
+	}
+	return (EXIT_SUCCESS);
+}
+
 int	ft_otool(char *ptr, char *ptr_end, char *av)
 {
 	int magic_number;
@@ -342,6 +371,10 @@ int	ft_otool(char *ptr, char *ptr_end, char *av)
 	if (magic_number == MH_MAGIC_64)
 	{
 		handle_64_text(ptr, av);
+	}
+	else if (magic_number == FAT_CIGAM)
+	{
+		ft_fat_file(ptr, ptr_end, av);
 	}
 	else if (!strncmp(ptr, ARMAG, SARMAG))
 	{

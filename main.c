@@ -12,9 +12,28 @@
 
 #include "ft_otool.h"
 
-int	ft_otool(char *ptr, char *ptr_end, char *av);
+int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool);
+void	ft_print_padding_adresse(
+	long int addr, size_t len_padding, char *padding);
 
-
+int	print_outpout_format(struct nlist_64 *nlist, char type, char *name)
+{
+	if (nlist->n_value || type != 'U')
+	{
+		ft_print_padding_adresse(nlist->n_value, ft_strlen(PADDING_STR_64), PADDING_STR_64);
+		// printf("%016llx",nlist->n_value);
+	}
+	else
+	{
+		write(1, "                ", ft_strlen("                "));
+	}
+	write(1, " ", 1);
+	write(1, &type, 1);
+	write(1, " ", 1);
+	write(1, name, ft_strlen(name));
+	write(1, "\n", 1);
+	return (EXIT_SUCCESS);
+}
 
 int	print_outpout(struct nlist_64 *nlist, char *stringtable)
 {
@@ -33,33 +52,23 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable)
 	}
 	if((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
-	// printf("type: %c , %s\n", type, stringtable + nlist->n_un.n_strx);
-	if (nlist->n_value)
-		printf("%016llx %c %s\n",nlist->n_value ,type, stringtable + nlist->n_un.n_strx);
-	else
-	{
-		printf("%s %c %s\n", "                " ,type, stringtable + nlist->n_un.n_strx);
-	}
+	print_outpout_format(nlist, type, stringtable + nlist->n_un.n_strx);
 	return (EXIT_SUCCESS);
 }
 
 int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
 {
-	int i;
-	int index;
+	int		i;
+	int		index;
 	char	*tmp;
 
-	// printf("REF: %s\n", ref);
 	i = 0;
 	tmp = NULL;
 	if (!ref)
-	{
 		tmp = stringtable + nlist[0].n_un.n_strx;
-	}
 	index = 0;
 	while (i < nsyms)
 	{
-		// printf("cmp: %d\n", ft_strcmp(tmp, stringtable + nlist[i].n_un.n_strx));
 		if (ref)
 		{
 			if (ft_strcmp(ref, stringtable + nlist[i].n_un.n_strx) < 0)
@@ -83,7 +92,6 @@ int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
 		}
 		i++;
 	}
-	// printf("index is :%d\n", index);
 	return (index);
 }
 
@@ -125,7 +133,7 @@ int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr)
 	return (EXIT_SUCCESS);
 }
 
-int	handle_64(char *ptr)
+int	handle_64(char *ptr, char *av)
 {
 	int						ncmds;
 	int						i;
@@ -134,7 +142,9 @@ int	handle_64(char *ptr)
 	struct symtab_command	*sym;
 	struct segment_command_64   *seg;
 
-
+	// write(1, "\n", 1);
+	// write(1, av, ft_strlen(av));
+	// write(1, ":\n", 2);
 	header = (struct mach_header_64 *)ptr;
 	ncmds = header->ncmds;
 	lc = (void *)ptr + sizeof(*header);
@@ -215,7 +225,7 @@ void	ft_print_padding_adresse(
 	if (addr > 0)
 		ft_get_adress_str(addr, &addr_str, len_padding - 1);
 	write(1, addr_str, len_padding);
-	write(1, "\t", 1);
+	// write(1, "\t", 1);
 	free(addr_str);
 }
 
@@ -232,8 +242,11 @@ int print_text_text_section(void *ptr, long double addr, int size, int is64)
 	while (j < size)
 	{
 		if (j % 16 == 0)
+		{
 			ft_print_padding_adresse(
 				addr, len, is64 ? PADDING_STR_64 : PADDING_STR);
+			write(1, "\t", 1);
+		}
 		if (*(unsigned char *)ptr < 0x10)
 			write(1, "0", 1);
 		ft_print_adress(*(unsigned char *)ptr);
@@ -451,7 +464,7 @@ int	ft_nm(char *ptr)
 	// printf("magic_number: %d\n", magic_number);
 	if (magic_number == MH_MAGIC_64)
 	{
-		handle_64(ptr);
+		handle_64(ptr, "test");
 		// write(1, "\n---\n", 6);
 		// handle_64_text(ptr);
 	}
@@ -502,7 +515,7 @@ void ft_print_archive_name(char *s1, char *s2)
 }
 
 
-int	ft_ar_file(char *ptr, char *ptr_end, char *av)
+int	ft_ar_file(char *ptr, char *ptr_end, char *av, int is_otool)
 {
 	struct ar_hdr	*ar;
 	int				len;
@@ -512,7 +525,8 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 	if ((void *)
 	(ar = (void *)ptr + SARMAG) + sizeof(struct ar_hdr) > (void *)ptr_end)
 		return (EXIT_FAILURE);
-	ft_print_archive_name("Archive : ", av);
+	if (is_otool)
+		ft_print_archive_name("Archive : ", av);
 	if ((len = ft_atoi(ar->ar_size)) <= 0)
 		return (EXIT_FAILURE);
 	while ((char *)(ar = (void *)ar + sizeof(*ar) + len) < ptr_end)
@@ -523,7 +537,13 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 		if (!(archive_name = ft_format_archive_name(
 			av, "(", (void *)ar + sizeof(*ar), ")")))
 			return (EXIT_FAILURE);
-		ft_otool((void *)ar + nb + sizeof(*ar), ptr_end, archive_name);
+		if (!is_otool)
+		{
+			write(1, "\n", 1);
+			write(1, archive_name, ft_strlen(archive_name));
+			write(1, ":\n", 2);
+		}
+		ft_otool((void *)ar + nb + sizeof(*ar), ptr_end, archive_name, is_otool);
 		free(archive_name);
 	}
 	return (EXIT_SUCCESS);
@@ -536,7 +556,7 @@ uint32_t	swap_uint32(uint32_t val)
 }
 
 
-int	ft_fat_file(char *ptr, char *ptr_end, char *av)
+int	ft_fat_file(char *ptr, char *ptr_end, char *av, int is_otool)
 {
 	struct fat_header	*f_h;
 	struct fat_arch		*f_a;
@@ -554,7 +574,7 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av)
 			offset = swap_uint32(f_a->offset);
 			if (offset >= 0)
 			{
-				return (ft_otool(ptr + offset, ptr_end, av));
+				return (ft_otool(ptr + offset, ptr_end, av, is_otool));
 			}
 		}
 		f_a = (void *)f_a + sizeof(*f_a);
@@ -563,12 +583,12 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av)
 	return (EXIT_SUCCESS);
 }
 
-int	ft_otool(char *ptr, char *ptr_end, char *av)
+int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 {
 	int magic_number;
 
-	// if (ptr >= ptr_end)
-	// 	return (EXIT_FAILURE);
+	if (ptr >= ptr_end)
+		return (EXIT_FAILURE);
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC)
 	{
@@ -576,15 +596,16 @@ int	ft_otool(char *ptr, char *ptr_end, char *av)
 	}
 	else if (magic_number == MH_MAGIC_64)
 	{
-		return (handle_64_text(ptr, ptr_end, av));
+		return (handle_64(ptr, av));
+		// return (handle_64_text(ptr, ptr_end, av));
 	}
 	else if (magic_number == FAT_CIGAM)
 	{
-		return (ft_fat_file(ptr, ptr_end, av));
+		return (ft_fat_file(ptr, ptr_end, av, is_otool));
 	}
 	else if (!strncmp(ptr, ARMAG, SARMAG))
 	{
-		return (ft_ar_file(ptr, ptr_end, av));
+		return (ft_ar_file(ptr, ptr_end, av, is_otool));
 	}
 	return (EXIT_SUCCESS);
 }
@@ -616,8 +637,8 @@ int	main(int ac, char **av) {
 		perror("mmap");
 		return (EXIT_FAILURE);
 	}
-	ft_nm(ptr);
-	// ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1]);
+	// ft_nm(ptr);
+	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1], 0);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");

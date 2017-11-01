@@ -14,40 +14,113 @@
 
 int	ft_otool(char *ptr, char *ptr_end, char *av);
 
-int	print_outpout(int nsyms, int symoff, int stroff, void *ptr)
+
+
+int	print_outpout(struct nlist_64 *nlist, char *stringtable)
 {
-	int				i;
-	char			*stringtable;
-	struct nlist_64	*array;
-	 struct section_64  *seg;
+	char type;
+	type = '?';
+	switch(nlist->n_type & N_TYPE) {
+		case N_UNDF: type = 'u'; break;
+		case N_ABS:  type = 'a'; break;
+		case N_SECT: type = 't'; break;
+		case N_PBUD: type = 'u'; break;
+		case N_INDR: type = 'i'; break;
+
+		default:
+			fprintf(stderr, "Invalid symbol type: 0x%x\n", nlist->n_type & N_TYPE);
+			return -1;
+	}
+	if((nlist->n_type & N_EXT) && type != '?')
+		type = ft_toupper(type);
+	// printf("type: %c , %s\n", type, stringtable + nlist->n_un.n_strx);
+	if (nlist->n_value)
+		printf("%016llx %c %s\n",nlist->n_value ,type, stringtable + nlist->n_un.n_strx);
+	else
+	{
+		printf("%s %c %s\n", "                " ,type, stringtable + nlist->n_un.n_strx);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
+{
+	int i;
+	int index;
+	char	*tmp;
+
+	// printf("REF: %s\n", ref);
+	i = 0;
+	tmp = NULL;
+	if (!ref)
+	{
+		tmp = stringtable + nlist[0].n_un.n_strx;
+	}
+	index = 0;
+	while (i < nsyms)
+	{
+		// printf("cmp: %d\n", ft_strcmp(tmp, stringtable + nlist[i].n_un.n_strx));
+		if (ref)
+		{
+			if (ft_strcmp(ref, stringtable + nlist[i].n_un.n_strx) < 0)
+			{
+				if (tmp && ft_strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
+				{
+					tmp = stringtable + nlist[i].n_un.n_strx;
+					index = i;
+				}
+				else if (!tmp)
+				{
+					tmp = stringtable + nlist[i].n_un.n_strx;
+					index = i;
+				}
+			}
+		}
+		else if (ft_strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
+		{
+			tmp = stringtable + nlist[i].n_un.n_strx;
+			index = i;
+		}
+		i++;
+	}
+	// printf("index is :%d\n", index);
+	return (index);
+}
+
+int	*array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable)
+{
+	int					*sort;
+	int					i;
+
+	if (!(sort = malloc(sizeof(int) * nsyms)))
+		return (NULL);
+	sort[0] = index_sort(nlist, nsyms, NULL, stringtable);
+	i = 1;
+	while (i < nsyms)
+	{
+		sort[i] = index_sort(nlist, nsyms, stringtable + nlist[sort[i - 1]].n_un.n_strx, stringtable);
+		i++;
+	}
+	return (sort);
+}
+
+int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr)
+{
+	int					i;
+	char				*stringtable;
+	struct nlist_64		*array;
+	int					*sort;
 
 	array = ptr + symoff;
 	stringtable = ptr + stroff;
+	sort = array_index_sorted(array, nsyms, stringtable);
 
-	for (i = 0; i < nsyms; i++) {
+	for (i = 0; i < nsyms; i++)
+	{
 
 		/* Get name of symbol type */
-		const char* type = NULL;
-		switch(array[i].n_type & N_TYPE) {
-			case N_UNDF: type = "U "; break;
-			case N_ABS:  type = "A "; break;
-			case N_SECT: type = "T "; break;
+		print_outpout(&array[sort[i]], stringtable);
 
-			default:
-				fprintf(stderr, "Invalid symbol type: 0x%x\n", array[i].n_type & N_TYPE);
-				return -1;
-		}
-		if (array[i].n_value)
-			printf("%016llx %s %s\n",array[i].n_value ,type, stringtable + array[i].n_un.n_strx);
-		else
-		{
-			printf("%s %s %s\n", "                " ,type, stringtable + array[i].n_un.n_strx);
-		}
-		// if (array[i].n_sect)
-		// {
-		// 	seg = ( struct section_64  *)(stringtable + array[i].n_un.n_strx);
-		// 	printf("name section : %s\n", seg->segname);
-		// }
 	}
 	return (EXIT_SUCCESS);
 }
@@ -69,7 +142,7 @@ int	handle_64(char *ptr)
 		if (lc->cmd == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
-			print_outpout(sym->nsyms, sym->symoff, sym->stroff, ptr);
+			sort_and_print_outpout(sym->nsyms, sym->symoff, sym->stroff, ptr);
 
 			break ;
 		}
@@ -543,8 +616,8 @@ int	main(int ac, char **av) {
 		perror("mmap");
 		return (EXIT_FAILURE);
 	}
-	// ft_nm(ptr);
-	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1]);
+	ft_nm(ptr);
+	// ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1]);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");

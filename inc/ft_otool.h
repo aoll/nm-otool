@@ -17,6 +17,12 @@
 
 #include "libft.h"
 
-#define CONTENT_TEXT_TEXT "Contents of (__TEXT,__text) section\n"
-#define PADDING_STR "0000000000000000"
+
+#define CONTENT_TEXT_TEXT 	"Contents of (__TEXT,__text) section\n"
+#define PADDING_STR			"00000000"
+#define PADDING_STR_64		"0000000000000000"
+#define MIN_LOAD_SIZE		8
+#define ERROR_LOAD_MIN_SIZE	"Mach-O load command with size < 8 bytes\n"
+#define ERROR_LOAD_SIZE		"Mach-O segment load command size is too small\n"
+
 #endif

@@ -12,9 +12,13 @@
 
 #include "ft_otool.h"
 
-int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool);
+int		ft_otool(char *ptr, char *ptr_end, char *av, int is_otool);
 void	ft_print_padding_adresse(
 	long int addr, size_t len_padding, char *padding);
+int		ft_check_load(
+	char *ptr, struct load_command *lc, int ncmds, int sizeofcmds);
+struct segment_command_64 *ft_find_segment_64(
+		char *ptr, struct load_command *lc, int ncmds, char *segment_name);
 
 int	print_outpout_format(struct nlist_64 *nlist, char type, char *name)
 {
@@ -35,14 +39,25 @@ int	print_outpout_format(struct nlist_64 *nlist, char type, char *name)
 	return (EXIT_SUCCESS);
 }
 
-int	print_outpout(struct nlist_64 *nlist, char *stringtable)
+int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos)
 {
 	char type;
 	type = '?';
 	switch(nlist->n_type & N_TYPE) {
-		case N_UNDF: type = 'u'; break;
+		case N_UNDF:
+			type = 'u';
+			if(nlist->n_value != 0)
+				type = 'c';
+			break;
 		case N_ABS:  type = 'a'; break;
-		case N_SECT: type = 't'; break;
+		case N_SECT:
+			type = 't';
+			// printf("nlist->n_sect: %d, seg_infos->bss_nsect: %d\n", nlist->n_sect, seg_infos->bss_nsect);
+			if (nlist->n_sect == seg_infos->bss_nsect)
+			{
+				type = 'b';
+			}
+			break;
 		case N_PBUD: type = 'u'; break;
 		case N_INDR: type = 'i'; break;
 
@@ -112,7 +127,7 @@ int	*array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable)
 	return (sort);
 }
 
-int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr)
+int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr, t_seg_infos *seg_infos)
 {
 	int					i;
 	char				*stringtable;
@@ -127,13 +142,53 @@ int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr)
 	{
 
 		/* Get name of symbol type */
-		print_outpout(&array[sort[i]], stringtable);
+		print_outpout(&array[sort[i]], stringtable, seg_infos);
 
 	}
 	return (EXIT_SUCCESS);
 }
 
-int	handle_64(char *ptr, char *av)
+void ft_init_seg_infos(t_seg_infos *seg_infos)
+{
+	seg_infos->text_nsect = NO_SECT;
+	seg_infos->data_nsect = NO_SECT;
+	seg_infos->bss_nsect = NO_SECT;
+	return ;
+}
+
+
+t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end, struct mach_header_64 *header, struct load_command *lc)
+{
+	t_seg_infos					*seg_infos;
+	struct segment_command_64	*segment;
+	struct section_64			*section;
+	int							loop;
+
+	if (!(seg_infos = malloc(sizeof(t_seg_infos))))
+		return (NULL);
+	lc = (void *)ptr + sizeof(*header);
+	if (ft_check_load(ptr, lc, header->ncmds, header->sizeofcmds))
+		return (NULL);
+	if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, "")))
+		return (NULL);
+	ft_init_seg_infos(seg_infos);
+	loop = 0;
+	section = (void *)segment + sizeof(*segment);
+	while (loop < segment->nsects)
+	{
+		if(ft_strcmp(section->sectname, SECT_TEXT) == 0)
+			seg_infos->text_nsect = loop + 1;
+		else if(ft_strcmp(section->sectname, SECT_DATA) == 0)
+			seg_infos->data_nsect = loop + 1;
+		else if(ft_strcmp(section->sectname, SECT_BSS) == 0)
+			seg_infos->bss_nsect = loop + 1;
+		section = (void *)section + sizeof(*section);
+		loop++;
+	}
+	return (seg_infos);
+}
+
+int	handle_64(char *ptr, char *ptr_end, char *av)
 {
 	int						ncmds;
 	int						i;
@@ -141,6 +196,7 @@ int	handle_64(char *ptr, char *av)
 	struct load_command		*lc;
 	struct symtab_command	*sym;
 	struct segment_command_64   *seg;
+	t_seg_infos					*seg_infos;
 
 	// write(1, "\n", 1);
 	// write(1, av, ft_strlen(av));
@@ -148,11 +204,13 @@ int	handle_64(char *ptr, char *av)
 	header = (struct mach_header_64 *)ptr;
 	ncmds = header->ncmds;
 	lc = (void *)ptr + sizeof(*header);
+	if (!(seg_infos = ft_infos_segment_64(ptr, ptr_end, header, lc)))
+		return (EXIT_FAILURE);
 	for (i = 0; i < ncmds; i++) {
 		if (lc->cmd == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
-			sort_and_print_outpout(sym->nsyms, sym->symoff, sym->stroff, ptr);
+			sort_and_print_outpout(sym->nsyms, sym->symoff, sym->stroff, ptr, seg_infos);
 
 			break ;
 		}
@@ -464,7 +522,7 @@ int	ft_nm(char *ptr)
 	// printf("magic_number: %d\n", magic_number);
 	if (magic_number == MH_MAGIC_64)
 	{
-		handle_64(ptr, "test");
+		handle_64(ptr, NULL, "test");
 		// write(1, "\n---\n", 6);
 		// handle_64_text(ptr);
 	}
@@ -596,7 +654,7 @@ int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 	}
 	else if (magic_number == MH_MAGIC_64)
 	{
-		return (handle_64(ptr, av));
+		return (handle_64(ptr, ptr_end, av));
 		// return (handle_64_text(ptr, ptr_end, av));
 	}
 	else if (magic_number == FAT_CIGAM)

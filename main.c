@@ -186,7 +186,7 @@ struct section_64 *ft_find_section_64(
 	section = (void *)segment + sizeof(*segment);
 	while (loop < segment->nsects)
 	{
-		if (!strcmp(section->sectname, section_name))
+		if (!ft_strcmp(section->sectname, section_name))
 		{
 			return (section);
 		}
@@ -206,7 +206,7 @@ struct section	*ft_find_section(
 	section = (void *)segment + sizeof(*segment);
 	while (loop < segment->nsects)
 	{
-		if (!strcmp(section->sectname, section_name))
+		if (!ft_strcmp(section->sectname, section_name))
 		{
 			return (section);
 		}
@@ -216,8 +216,29 @@ struct section	*ft_find_section(
 	return (NULL);
 }
 
-int	ft_check_load()
+int	ft_check_load(char *ptr, struct load_command *lc, int ncmds, int sizeofcmds)
 {
+	int							i;
+	int							size;
+
+	i = 0;
+	size = 0;
+	while (i < ncmds)
+	{
+		if (lc->cmdsize < MIN_LOAD_SIZE)
+		{
+			ft_putstr_fd(ERROR_LOAD_MIN_SIZE , STDERR);
+			return (EXIT_FAILURE);
+		}
+		size += lc->cmdsize;
+		i++;
+		lc = (void *)lc + lc->cmdsize;
+	}
+	if (size != sizeofcmds)
+	{
+		ft_putstr_fd(ERROR_LOAD_SIZE , STDERR);
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
@@ -230,12 +251,13 @@ struct segment_command_64 *ft_find_segment_64(
 
 	i = 0;
 	nb_seg = 0;
+	seg = NULL;
 	while (i < ncmds)
 	{
 		if (lc->cmd == LC_SEGMENT_64)
 		{
 			seg = (struct segment_command_64*)lc;
-			if (strcmp(seg->segname, segment_name) == 0 || ncmds == 1)
+			if (ft_strcmp(seg->segname, segment_name) == 0 || ncmds == 1)
 			{
 				return (seg);
 			}
@@ -254,6 +276,7 @@ struct segment_command *ft_find_segment(
 	int						i;
 	int						nb_seg;
 
+	seg = NULL;
 	i = 0;
 	nb_seg = 0;
 	while (i < ncmds)
@@ -261,7 +284,7 @@ struct segment_command *ft_find_segment(
 		if (lc->cmd == LC_SEGMENT)
 		{
 			seg = (struct segment_command*)lc;
-			if (strcmp(seg->segname, segment_name) == 0 || ncmds == 1)
+			if (ft_strcmp(seg->segname, segment_name) == 0 || ncmds == 1)
 			{
 				return (seg);
 			}
@@ -281,6 +304,8 @@ struct section_64 *ft_find_segment_section_64(char *ptr,
 	struct section_64			*section;
 
 	lc = (void *)ptr + sizeof(*header);
+	if (ft_check_load(ptr, lc, header->ncmds, header->sizeofcmds))
+		return (NULL);
 	if (!(seg = ft_find_segment_64(ptr, lc, header->ncmds, segment_name)))
 		return (NULL);
 	if (!(section = ft_find_section_64(ptr, seg, section_name)))
@@ -303,12 +328,20 @@ struct section *ft_find_segment_section(char *ptr,
 	return (section);
 }
 
-int	handle_64_text(char *ptr, char *av)
+int	handle_64_text(char *ptr, char *ptr_end, char *av)
 {
 	struct mach_header_64		*header;
 	struct section_64			*section;
 
+	if ((void *)ptr + sizeof(struct mach_header_64) > (void *)ptr_end)
+	{
+		return (EXIT_FAILURE);
+	}
 	header = (struct mach_header_64 *)ptr;
+	if ((void *)ptr + header->sizeofcmds > (void *)ptr_end)
+	{
+		return (EXIT_FAILURE);
+	}
 	if (!(section = ft_find_segment_section_64(
 		ptr, header, SEG_TEXT, SECT_TEXT)))
 		return (EXIT_FAILURE);
@@ -367,19 +400,23 @@ int	ft_ranlib(char *ptr)
 
 char	*ft_format_archive_name(char *n1, char *n2, char *n3, char *n4)
 {
-	char *s;
-	int len;
+	char	*s;
+	int		l1;
+	int		l2;
+	int		l3;
 
-	len = ft_strlen(n1) + ft_strlen(n2) + ft_strlen(n3) + ft_strlen(n4) + 1;
-	if (!(s = malloc(sizeof(char) * len)))
+	l1 = ft_strlen(n1);
+	l2 = ft_strlen(n2);
+	l3 = ft_strlen(n3);
+	if (!(s = malloc(sizeof(char) * l1 + l2 + l3 + ft_strlen(n4) + 1)))
 	{
 		return (NULL);
 	}
-	s[len - 1] = '\0';
-	strcpy(s, n1);
-	strcpy(s + ft_strlen(n1), n2);
-	strcpy(s + ft_strlen(n1) + ft_strlen(n2), n3);
-	strcpy(s + ft_strlen(n1) + ft_strlen(n2) + ft_strlen(n3), n4);
+	s[l1 + l2 + l3 + ft_strlen(n4)] = '\0';
+	ft_strcpy(s, n1);
+	ft_strcpy(s + l1, n2);
+	ft_strcpy(s + l1 + l2, n3);
+	ft_strcpy(s + l1 + l2 + l3, n4);
 	return (s);
 
 }
@@ -399,9 +436,11 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av)
 	int				nb;
 	char			*archive_name;
 
+	if ((void *)
+	(ar = (void *)ptr + SARMAG) + sizeof(struct ar_hdr) > (void *)ptr_end)
+		return (EXIT_FAILURE);
 	ft_print_archive_name("Archive : ", av);
-	ar = (void *)ptr + SARMAG;
-	if ((len = atoi(ar->ar_size)) <= 0)
+	if ((len = ft_atoi(ar->ar_size)) <= 0)
 		return (EXIT_FAILURE);
 	while ((char *)(ar = (void *)ar + sizeof(*ar) + len) < ptr_end)
 	{
@@ -455,24 +494,24 @@ int	ft_otool(char *ptr, char *ptr_end, char *av)
 {
 	int magic_number;
 
-	if (ptr >= ptr_end)
-		return (EXIT_FAILURE);
+	// if (ptr >= ptr_end)
+	// 	return (EXIT_FAILURE);
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC)
 	{
-		handle_text(ptr, av);
+		return (handle_text(ptr, av));
 	}
 	else if (magic_number == MH_MAGIC_64)
 	{
-		handle_64_text(ptr, av);
+		return (handle_64_text(ptr, ptr_end, av));
 	}
 	else if (magic_number == FAT_CIGAM)
 	{
-		ft_fat_file(ptr, ptr_end, av);
+		return (ft_fat_file(ptr, ptr_end, av));
 	}
 	else if (!strncmp(ptr, ARMAG, SARMAG))
 	{
-		ft_ar_file(ptr, ptr_end, av);
+		return (ft_ar_file(ptr, ptr_end, av));
 	}
 	return (EXIT_SUCCESS);
 }

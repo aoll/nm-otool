@@ -603,12 +603,17 @@ int	handle_64_text(char *ptr, char *ptr_end, char *av)
 	return (EXIT_SUCCESS);
 }
 
-int	handle_text(char *ptr, char *av)
+int	handle_text(char *ptr, char *ptr_end, char *av)
 {
 	struct mach_header		*header;
 	struct section			*section;
 
-	header = (struct mach_header *)ptr;
+	if ((void *)(header = (struct mach_header *)ptr) > ptr_end)
+		return (EXIT_FAILURE);
+	if ((void *)ptr + header->sizeofcmds > (void *)ptr_end)
+	{
+		return (EXIT_FAILURE);
+	}
 	if (!(section = ft_find_segment_section(
 		ptr, header, SEG_TEXT, SECT_TEXT)))
 		return (EXIT_FAILURE);
@@ -617,36 +622,6 @@ int	handle_text(char *ptr, char *av)
 	print_text_text_section(
 		(void*)ptr + section->offset, section->addr, section->size, 0);
 	return (EXIT_SUCCESS);
-}
-
-
-
-int	ft_nm(char *ptr)
-{
-	int magic_number;
-
-	magic_number = *(int *)ptr;
-	// printf("magic_number: %d\n", magic_number);
-	if (magic_number == MH_MAGIC_64)
-	{
-		handle_64(ptr, NULL, "test");
-		// write(1, "\n---\n", 6);
-		// handle_64_text(ptr);
-	}
-	return (EXIT_SUCCESS);
-}
-
-int	ft_ranlib(char *ptr)
-{
-	struct ranlib* ranlib;
-	// void *ranlib;
-
-	ranlib = (void *)ptr + 88;
-	printf("ran: %u\n", *(uint32_t *)ranlib);
-
-	ranlib = (void *)ptr + 88 + sizeof(uint32_t);
-	printf("off %d\n", ranlib[0].ran_off);
-	return (0);
 }
 
 char	*ft_format_archive_name(char *n1, char *n2, char *n3, char *n4)
@@ -757,7 +732,7 @@ int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC)
 	{
-		return (handle_text(ptr, av));
+		return (handle_text(ptr, ptr_end, av));
 	}
 	else if (magic_number == MH_MAGIC_64)
 	{
@@ -765,8 +740,6 @@ int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 			return (handle_64_text(ptr, ptr_end, av));
 		else
 			return (handle_64(ptr, ptr_end, av));
-		// return (handle_64(ptr, ptr_end, av));
-		// return (handle_64_text(ptr, ptr_end, av));
 	}
 	else if (magic_number == FAT_CIGAM)
 	{
@@ -776,7 +749,10 @@ int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 	{
 		return (ft_ar_file(ptr, ptr_end, av, is_otool));
 	}
-	return (EXIT_SUCCESS);
+	ft_putstr_fd(av, STDERR);
+	ft_putstr_fd(": ", STDERR);
+	ft_putstr_fd(ERROR_FORMAT_FILE, STDERR);
+	return (EXIT_FAILURE);
 }
 
 int	main(int ac, char **av) {

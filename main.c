@@ -53,13 +53,18 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 	// 	return (EXIT_SUCCESS);
 	// }
 	// printf("%d\n", );
-	int c = nlist->n_type;
-	if (c & N_STAB && nlist->n_type != 36)
+	int c = nlist->n_type & N_STAB;
+	if ((nlist->n_type & N_STAB) != 0)
 	{
 		// printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
 		return (EXIT_SUCCESS);
 	}
-	printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
+	// if (c & N_STAB && nlist->n_type == 1)
+	// {
+	// 	printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
+	// 	return (EXIT_SUCCESS);
+	// }
+	// printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
 	switch(nlist->n_type & N_TYPE) {
 		case N_UNDF:
 			type = 'u';
@@ -111,9 +116,9 @@ int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
 	{
 		if (ref)
 		{
-			if (ft_strcmp(ref, stringtable + nlist[i].n_un.n_strx) < 0)
+			if (strcmp(ref, stringtable + nlist[i].n_un.n_strx) < 0)
 			{
-				if (tmp && ft_strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
+				if (tmp && strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
 				{
 					tmp = stringtable + nlist[i].n_un.n_strx;
 					index = i;
@@ -125,7 +130,7 @@ int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
 				}
 			}
 		}
-		else if (ft_strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
+		else if (strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
 		{
 			tmp = stringtable + nlist[i].n_un.n_strx;
 			index = i;
@@ -135,20 +140,55 @@ int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
 	return (index);
 }
 
-int	*array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable)
+void	sort_ascii(t_sort **tmp, int nsyms)
 {
-	int					*sort;
-	int					i;
+	int		i;
 
-	if (!(sort = malloc(sizeof(int) * nsyms)))
-		return (NULL);
-	sort[0] = index_sort(nlist, nsyms, NULL, stringtable);
-	i = 1;
+	i = 0;
+	while (i + 1 < nsyms)
+	{
+		if (ft_strcmp(tmp[i]->name, tmp[i + 1]->name) > 0)
+		{
+			t_sort *s;
+			s = tmp[i];
+			tmp[i] = tmp[i + 1];
+			tmp[i + 1] = s;
+			i = 0;
+		}
+		else
+			i++;
+	}
+	return ;
+}
+
+int	init_sort(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringtable)
+{
+	int		i;
+	int		index;
+	char	*tmp;
+	t_sort	*new;
+
+	i = 0;
 	while (i < nsyms)
 	{
-		sort[i] = index_sort(nlist, nsyms, stringtable + nlist[sort[i - 1]].n_un.n_strx, stringtable);
+		if (!(new = malloc(sizeof(t_sort))))
+			return (EXIT_FAILURE);
+		new->name = ft_strdup(stringtable + nlist[i].n_un.n_strx);
+		new->index = i;
+		sort[i] = new;
 		i++;
 	}
+	sort_ascii(sort, nsyms);
+	return (EXIT_SUCCESS);
+}
+
+t_sort	**array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable)
+{
+	t_sort					**sort;
+
+	if (!(sort = malloc(sizeof(t_sort *) * nsyms)))
+		return (NULL);
+	init_sort(sort, nlist, nsyms, stringtable);
 	return (sort);
 }
 
@@ -157,19 +197,21 @@ int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr, t_seg_i
 	int					i;
 	char				*stringtable;
 	struct nlist_64		*array;
-	int					*sort;
+	t_sort				**sort;
 
 	array = ptr + symoff;
 	stringtable = ptr + stroff;
-	sort = array_index_sorted(array, nsyms, stringtable);
-
-	for (i = 0; i < nsyms; i++)
+	if (!(sort = array_index_sorted(array, nsyms, stringtable)))
+		return (EXIT_FAILURE);
+	i = 0;
+	while (i < nsyms)
 	{
-
-		/* Get name of symbol type */
-		print_outpout(&array[sort[i]], stringtable, seg_infos);
-
+		print_outpout(&array[sort[i]->index], stringtable, seg_infos);
+		free(sort[i]->name);
+		free(sort[i]);
+		i++;
 	}
+	free(sort);
 	return (EXIT_SUCCESS);
 }
 

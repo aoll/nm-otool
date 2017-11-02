@@ -82,6 +82,12 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 				type = 'b';
 			else
 				type = 's';
+
+			if (type == 's') {
+				printf("SECT_BSS %s\n", SECT_BSS);
+				printf("SECT: %d, seg_infos->text_nsect: %d, seg_infos->data_nsect: %d\n", nlist->n_sect, seg_infos->text_nsect, seg_infos->data_nsect);
+				/* code */
+			}
 			// printf("nlist->n_sect: %d, seg_infos->bss_nsect: %d\n", nlist->n_sect, seg_infos->bss_nsect);
 			if (nlist->n_sect == seg_infos->bss_nsect)
 			{
@@ -161,6 +167,16 @@ void	sort_ascii(t_sort **tmp, int nsyms)
 	return ;
 }
 
+int	 free_sort(t_sort **sort, int index)
+{
+	while (--index >= 0)
+	{
+		free(sort[index]->name);
+		free(sort[index]);
+	}
+	return (EXIT_SUCCESS);
+}
+
 int	init_sort(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringtable)
 {
 	int		i;
@@ -172,23 +188,35 @@ int	init_sort(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringtabl
 	while (i < nsyms)
 	{
 		if (!(new = malloc(sizeof(t_sort))))
+		{
+			free_sort(sort, i);
 			return (EXIT_FAILURE);
-		new->name = ft_strdup(stringtable + nlist[i].n_un.n_strx);
+		}
+		if (!(new->name = ft_strdup(stringtable + nlist[i].n_un.n_strx)))
+		{
+			free_sort(sort, i);
+			return (EXIT_FAILURE);
+		}
 		new->index = i;
 		sort[i] = new;
 		i++;
 	}
-	sort_ascii(sort, nsyms);
 	return (EXIT_SUCCESS);
 }
 
 t_sort	**array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable)
 {
 	t_sort					**sort;
+	int						err;
 
 	if (!(sort = malloc(sizeof(t_sort *) * nsyms)))
 		return (NULL);
-	init_sort(sort, nlist, nsyms, stringtable);
+	if ((err = init_sort(sort, nlist, nsyms, stringtable)))
+	{
+		free(sort);
+		return (NULL);
+	}
+	sort_ascii(sort, nsyms);
 	return (sort);
 }
 
@@ -236,7 +264,8 @@ t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end, struct mach_header_64
 	lc = (void *)ptr + sizeof(*header);
 	if (ft_check_load(ptr, lc, header->ncmds, header->sizeofcmds))
 		return (NULL);
-	if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, SEG_TEXT)))
+	if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, SEG_DATA)))
+	// if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, SEG_TEXT)))
 		return (NULL);
 	ft_init_seg_infos(seg_infos);
 	loop = 0;
@@ -283,7 +312,7 @@ int	handle_64(char *ptr, char *ptr_end, char *av)
 		}
 		lc = (void *)lc + lc->cmdsize;
 	}
-
+	free(seg_infos);
 	return (EXIT_SUCCESS);
 }
 
@@ -721,7 +750,11 @@ int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 	}
 	else if (magic_number == MH_MAGIC_64)
 	{
-		return (handle_64(ptr, ptr_end, av));
+		if (is_otool)
+			return (handle_64_text(ptr, ptr_end, av));
+		else
+			return (handle_64(ptr, ptr_end, av));
+		// return (handle_64(ptr, ptr_end, av));
 		// return (handle_64_text(ptr, ptr_end, av));
 	}
 	else if (magic_number == FAT_CIGAM)

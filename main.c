@@ -20,16 +20,16 @@ int		ft_check_load(
 struct segment_command_64 *ft_find_segment_64(
 		char *ptr, struct load_command *lc, int ncmds, char *segment_name);
 
-int	print_outpout_format(struct nlist_64 *nlist, char type, char *name)
+int	print_outpout_format(struct nlist *nlist, char type, char *name)
 {
 	if (nlist->n_value || type != 'U')
 	{
-		ft_print_padding_adresse(nlist->n_value, ft_strlen(PADDING_STR_64), PADDING_STR_64);
+		ft_print_padding_adresse(nlist->n_value, ft_strlen(PADDING_STR), PADDING_STR);
 		// printf("%016llx",nlist->n_value);
 	}
 	else
 	{
-		write(1, "                ", ft_strlen("                "));
+		write(1, PADDING_SPACE, ft_strlen(PADDING_SPACE));
 	}
 	write(1, " ", 1);
 	write(1, &type, 1);
@@ -39,32 +39,34 @@ int	print_outpout_format(struct nlist_64 *nlist, char type, char *name)
 	return (EXIT_SUCCESS);
 }
 
-int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos)
+int	print_outpout_format_64(struct nlist_64 *nlist, char type, char *name)
+{
+	if (nlist->n_value || type != 'U')
+	{
+		ft_print_padding_adresse(nlist->n_value, ft_strlen(PADDING_STR_64), PADDING_STR_64);
+		// printf("%016llx",nlist->n_value);
+	}
+	else
+	{
+		write(1, PADDING_SPACE_64, ft_strlen(PADDING_SPACE_64));
+	}
+	write(1, " ", 1);
+	write(1, &type, 1);
+	write(1, " ", 1);
+	write(1, name, ft_strlen(name));
+	write(1, "\n", 1);
+	return (EXIT_SUCCESS);
+}
+
+int	print_outpout(struct nlist *nlist, char *stringtable, t_seg_infos *seg_infos)
 {
 	char type;
 	type = '?';
-	// if (!nlist->n_value)
-	// {
-	// 	return (EXIT_SUCCESS);
-	// }
-	// printf("\nn_type: %d, n_sect: %d, n_desc: %d, n_value: %llu\n", nlist->n_type, nlist->n_sect, nlist->n_desc, nlist->n_value );
-	// if (nlist->n_type & N_STAB && !nlist->n_value)
-	// {
-	// 	return (EXIT_SUCCESS);
-	// }
-	// printf("%d\n", );
 	int c = nlist->n_type & N_STAB;
 	if ((nlist->n_type & N_STAB) != 0)
 	{
-		// printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
 		return (EXIT_SUCCESS);
 	}
-	// if (c & N_STAB && nlist->n_type == 1)
-	// {
-	// 	printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
-	// 	return (EXIT_SUCCESS);
-	// }
-	// printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
 	switch(nlist->n_type & N_TYPE) {
 		case N_UNDF:
 			type = 'u';
@@ -73,7 +75,6 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 			break;
 		case N_ABS:  type = 'a'; break;
 		case N_SECT:
-			// printf("SECT: %d, seg_infos->text_nsect: %d\n", nlist->n_sect, seg_infos->text_nsect);
 			if(nlist->n_sect == seg_infos->text_nsect)
 				type = 't';
 			else if(nlist->n_sect == seg_infos->data_nsect)
@@ -82,8 +83,6 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 				type = 'b';
 			else
 				type = 's';
-
-			// printf("nlist->n_sect: %d, seg_infos->bss_nsect: %d\n", nlist->n_sect, seg_infos->bss_nsect);
 			if (nlist->n_sect == seg_infos->bss_nsect)
 			{
 				type = 'b';
@@ -99,6 +98,49 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 	if((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
 	print_outpout_format(nlist, type, stringtable + nlist->n_un.n_strx);
+	return (EXIT_SUCCESS);
+}
+
+int	print_outpout_64(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos)
+{
+	char type;
+	type = '?';
+	int c = nlist->n_type & N_STAB;
+	if ((nlist->n_type & N_STAB) != 0)
+	{
+		return (EXIT_SUCCESS);
+	}
+	switch(nlist->n_type & N_TYPE) {
+		case N_UNDF:
+			type = 'u';
+			if(nlist->n_value != 0)
+				type = 'c';
+			break;
+		case N_ABS:  type = 'a'; break;
+		case N_SECT:
+			if(nlist->n_sect == seg_infos->text_nsect)
+				type = 't';
+			else if(nlist->n_sect == seg_infos->data_nsect)
+				type = 'd';
+			else if(nlist->n_sect == seg_infos->bss_nsect)
+				type = 'b';
+			else
+				type = 's';
+			if (nlist->n_sect == seg_infos->bss_nsect)
+			{
+				type = 'b';
+			}
+			break;
+		case N_PBUD: type = 'u'; break;
+		case N_INDR: type = 'i'; break;
+
+		default:
+			type = '?';
+			break;
+	}
+	if((nlist->n_type & N_EXT) && type != '?')
+		type = ft_toupper(type);
+	print_outpout_format_64(nlist, type, stringtable + nlist->n_un.n_strx);
 	return (EXIT_SUCCESS);
 }
 
@@ -172,7 +214,7 @@ int	 free_sort(t_sort **sort, int index)
 	return (EXIT_SUCCESS);
 }
 
-int	init_sort(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringtable)
+int	init_sort_64(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringtable)
 {
 	int		i;
 	int		index;
@@ -199,7 +241,34 @@ int	init_sort(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringtabl
 	return (EXIT_SUCCESS);
 }
 
-t_sort	**array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable)
+int	init_sort(t_sort **sort, struct nlist *nlist, int nsyms, char *stringtable)
+{
+	int		i;
+	int		index;
+	char	*tmp;
+	t_sort	*new;
+
+	i = 0;
+	while (i < nsyms)
+	{
+		if (!(new = malloc(sizeof(t_sort))))
+		{
+			free_sort(sort, i);
+			return (EXIT_FAILURE);
+		}
+		if (!(new->name = ft_strdup(stringtable + nlist[i].n_un.n_strx)))
+		{
+			free_sort(sort, i);
+			return (EXIT_FAILURE);
+		}
+		new->index = i;
+		sort[i] = new;
+		i++;
+	}
+	return (EXIT_SUCCESS);
+}
+
+t_sort	**array_index_sorted(struct nlist *nlist, int nsyms, char *stringtable)
 {
 	t_sort					**sort;
 	int						err;
@@ -215,11 +284,27 @@ t_sort	**array_index_sorted(struct nlist_64 *nlist, int nsyms, char *stringtable
 	return (sort);
 }
 
+t_sort	**array_index_sorted_64(struct nlist_64 *nlist, int nsyms, char *stringtable)
+{
+	t_sort					**sort;
+	int						err;
+
+	if (!(sort = malloc(sizeof(t_sort *) * nsyms)))
+		return (NULL);
+	if ((err = init_sort_64(sort, nlist, nsyms, stringtable)))
+	{
+		free(sort);
+		return (NULL);
+	}
+	sort_ascii(sort, nsyms);
+	return (sort);
+}
+
 int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr, t_seg_infos *seg_infos)
 {
 	int					i;
 	char				*stringtable;
-	struct nlist_64		*array;
+	struct nlist		*array;
 	t_sort				**sort;
 
 	array = ptr + symoff;
@@ -230,6 +315,29 @@ int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr, t_seg_i
 	while (i < nsyms)
 	{
 		print_outpout(&array[sort[i]->index], stringtable, seg_infos);
+		free(sort[i]->name);
+		free(sort[i]);
+		i++;
+	}
+	free(sort);
+	return (EXIT_SUCCESS);
+}
+
+int	sort_and_print_outpout_64(int nsyms, int symoff, int stroff, void *ptr, t_seg_infos *seg_infos)
+{
+	int					i;
+	char				*stringtable;
+	struct nlist_64		*array;
+	t_sort				**sort;
+
+	array = ptr + symoff;
+	stringtable = ptr + stroff;
+	if (!(sort = array_index_sorted_64(array, nsyms, stringtable)))
+		return (EXIT_FAILURE);
+	i = 0;
+	while (i < nsyms)
+	{
+		print_outpout_64(&array[sort[i]->index], stringtable, seg_infos);
 		free(sort[i]->name);
 		free(sort[i]);
 		i++;
@@ -290,8 +398,48 @@ t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end, struct mach_header_64
 		lc = (void *)lc + lc->cmdsize;
 		i++;
 	}
+	return (seg_infos);
+}
 
+t_seg_infos	*ft_infos_segment(char *ptr, char *ptr_end, struct mach_header *header, struct load_command *lc)
+{
+	t_seg_infos					*seg_infos;
+	struct segment_command	*segment;
+	struct section			*section;
+	int							loop;
+	int							i;
 
+	if (!(seg_infos = malloc(sizeof(t_seg_infos))))
+		return (NULL);
+	lc = (void *)ptr + sizeof(*header);
+	if (ft_check_load(ptr, lc, header->ncmds, header->sizeofcmds))
+		return (NULL);
+	ft_init_seg_infos(seg_infos);
+	i = 0;
+	int index = 0;
+	while (i < header->ncmds)
+	{
+		if (lc->cmd == LC_SEGMENT)
+		{
+			segment = (struct segment_command*)lc;
+			section = (void *)segment + sizeof(*segment);
+			loop = 0;
+			while (loop < segment->nsects)
+			{
+				if(ft_strcmp(section->sectname, SECT_TEXT) == 0)
+					seg_infos->text_nsect = index + 1;
+				else if(ft_strcmp(section->sectname, SECT_DATA) == 0)
+					seg_infos->data_nsect = index + 1;
+				else if(ft_strcmp(section->sectname, SECT_BSS) == 0)
+					seg_infos->bss_nsect = index + 1;
+				section = (void *)section + sizeof(*section);
+				loop++;
+				index++;
+			}
+		}
+		lc = (void *)lc + lc->cmdsize;
+		i++;
+	}
 	return (seg_infos);
 }
 
@@ -305,23 +453,59 @@ int	handle_64(char *ptr, char *ptr_end, char *av)
 	struct segment_command_64   *seg;
 	t_seg_infos					*seg_infos;
 
-	// write(1, "\n", 1);
-	// write(1, av, ft_strlen(av));
-	// write(1, ":\n", 2);
-	header = (struct mach_header_64 *)ptr;
+	if ((void *)(header = (struct mach_header_64 *)ptr) > (void *)ptr_end)
+		return (EXIT_FAILURE);
+	if ((void *)ptr + header->sizeofcmds > (void *)ptr_end)
+		return (EXIT_FAILURE);
 	ncmds = header->ncmds;
 	lc = (void *)ptr + sizeof(*header);
 	if (!(seg_infos = ft_infos_segment_64(ptr, ptr_end, header, lc)))
 		return (EXIT_FAILURE);
-	for (i = 0; i < ncmds; i++) {
+	i = 0;
+	while (i < ncmds)
+	{
+		if (lc->cmd == LC_SYMTAB)
+		{
+			sym = (struct symtab_command *)lc;
+			sort_and_print_outpout_64(sym->nsyms, sym->symoff, sym->stroff, ptr, seg_infos);
+			break ;
+		}
+		lc = (void *)lc + lc->cmdsize;
+		i++;
+	}
+	free(seg_infos);
+	return (EXIT_SUCCESS);
+}
+
+int	handle(char *ptr, char *ptr_end, char *av)
+{
+	int						ncmds;
+	int						i;
+	struct mach_header	*header;
+	struct load_command		*lc;
+	struct symtab_command	*sym;
+	struct segment_command   *seg;
+	t_seg_infos					*seg_infos;
+
+	if ((void *)(header = (struct mach_header *)ptr) > (void *)ptr_end)
+		return (EXIT_FAILURE);
+	if ((void *)ptr + header->sizeofcmds > (void *)ptr_end)
+		return (EXIT_FAILURE);
+	ncmds = header->ncmds;
+	lc = (void *)ptr + sizeof(*header);
+	if (!(seg_infos = ft_infos_segment(ptr, ptr_end, header, lc)))
+		return (EXIT_FAILURE);
+	i = 0;
+	while (i < ncmds)
+	{
 		if (lc->cmd == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
 			sort_and_print_outpout(sym->nsyms, sym->symoff, sym->stroff, ptr, seg_infos);
-
 			break ;
 		}
 		lc = (void *)lc + lc->cmdsize;
+		i++;
 	}
 	free(seg_infos);
 	return (EXIT_SUCCESS);
@@ -608,7 +792,7 @@ int	handle_text(char *ptr, char *ptr_end, char *av)
 	struct mach_header		*header;
 	struct section			*section;
 
-	if ((void *)(header = (struct mach_header *)ptr) > ptr_end)
+	if ((void *)(header = (struct mach_header *)ptr) > (void *)ptr_end)
 		return (EXIT_FAILURE);
 	if ((void *)ptr + header->sizeofcmds > (void *)ptr_end)
 	{
@@ -732,7 +916,10 @@ int	ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 	magic_number = *(int *)ptr;
 	if (magic_number == MH_MAGIC)
 	{
-		return (handle_text(ptr, ptr_end, av));
+		if (is_otool)
+			return (handle_text(ptr, ptr_end, av));
+		else
+			return (handle(ptr, ptr_end, av));
 	}
 	else if (magic_number == MH_MAGIC_64)
 	{

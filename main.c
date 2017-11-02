@@ -292,6 +292,33 @@ struct nlist_64	**ft_copy_nlist64(struct nlist_64 *array, int nsyms)
 	}
 	return (list);
 }
+struct nlist	**ft_copy_nlist(struct nlist *array, int nsyms)
+{
+	struct nlist	**list;
+	struct nlist	*l;
+	int				i;
+
+	if (!(list = malloc(sizeof(struct nlist *) * nsyms)))
+		return (NULL);
+	i = 0;
+	while (i < nsyms)
+	{
+		if (!(l = malloc(sizeof(struct nlist))))
+		{
+			while (--i >= 0)
+				free(list[i]);
+			free(list);
+			return (NULL);
+		}
+		l->n_type = array[i].n_type;
+		l->n_sect = array[i].n_sect;
+		l->n_value = array[i].n_value;
+		l->n_un.n_strx = array[i].n_un.n_strx;
+		list[i] = l;
+		i++;
+	}
+	return (list);
+}
 
 int	ft_sort64(struct nlist_64 *array, int nsyms, char *stringtable, t_seg_infos *seg_infos)
 {
@@ -339,7 +366,57 @@ int	ft_sort64(struct nlist_64 *array, int nsyms, char *stringtable, t_seg_infos 
 		list[index] = NULL;
 		j++;
 	}
+	free(list);
+	return (EXIT_SUCCESS);
+}
 
+int	ft_sort(struct nlist *array, int nsyms, char *stringtable, t_seg_infos *seg_infos)
+{
+	struct nlist		**list;
+	struct nlist		*tmp;
+	int					i;
+	int					j;
+	int					index;
+	int					cmp;
+
+	if (!(list = ft_copy_nlist(array, nsyms)))
+		return (EXIT_SUCCESS);
+	j = 0;
+	i = 0;
+	while (j < nsyms)
+	{
+		tmp = NULL;
+		index = 0;
+		i = 0;
+		while (i < nsyms)
+		{
+			if (!tmp && list[i])
+			{
+				tmp = list[i];
+				index = i;
+			}
+			if (list[i])
+			{
+				cmp = ft_strcmp(stringtable + tmp->n_un.n_strx, stringtable + list[i]->n_un.n_strx);
+				if (cmp > 0)
+				{
+					tmp = list[i];
+					index = i;
+				}
+				else if (!cmp && tmp->n_value > list[i]->n_value)
+				{
+					tmp = list[i];
+					index = i;
+				}
+			}
+			i++;
+		}
+		print_outpout(tmp, stringtable, seg_infos);
+		free(list[index]);
+		list[index] = NULL;
+		j++;
+	}
+	free(list);
 	return (EXIT_SUCCESS);
 }
 
@@ -352,6 +429,8 @@ int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr, t_seg_i
 
 	array = ptr + symoff;
 	stringtable = ptr + stroff;
+	ft_sort(array, nsyms, stringtable, seg_infos);
+	return (0);//wazza
 	if (!(sort = array_index_sorted(array, nsyms, stringtable)))
 		return (EXIT_FAILURE);
 	i = 0;
@@ -883,6 +962,27 @@ void ft_print_archive_name(char *s1, char *s2)
 	write(1, "\n", 1);
 }
 
+int	check_valid_file(char *ptr, char *ptr_end)
+{
+	int magic_number;
+
+	if (ptr >= ptr_end)
+		return (EXIT_FAILURE);
+	magic_number = *(int *)ptr;
+	if (magic_number == MH_MAGIC || magic_number == MH_MAGIC_64)
+	{
+		return (EXIT_SUCCESS);
+	}
+	else if (magic_number == FAT_CIGAM)
+	{
+		return (EXIT_SUCCESS);
+	}
+	else if (!strncmp(ptr, ARMAG, SARMAG))
+	{
+		return (EXIT_SUCCESS);
+	}
+	return (EXIT_FAILURE);
+}
 
 int	ft_ar_file(char *ptr, char *ptr_end, char *av, int is_otool)
 {
@@ -903,6 +1003,10 @@ int	ft_ar_file(char *ptr, char *ptr_end, char *av, int is_otool)
 		if ((len = atoi(ar->ar_size)) <= 0)
 			return (EXIT_FAILURE);
 		nb = atoi(ar->ar_name + ft_strlen(AR_EFMT1));
+		if (check_valid_file((void *)ar + nb + sizeof(*ar), ptr_end))
+		{
+			continue ;
+		}
 		if (!(archive_name = ft_format_archive_name(
 			av, "(", (void *)ar + sizeof(*ar), ")")))
 			return (EXIT_FAILURE);
@@ -1015,7 +1119,7 @@ int	main(int ac, char **av) {
 		return (EXIT_FAILURE);
 	}
 	// ft_nm(ptr);
-	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1], 0);
+	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1], 1);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");

@@ -43,6 +43,23 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 {
 	char type;
 	type = '?';
+	// if (!nlist->n_value)
+	// {
+	// 	return (EXIT_SUCCESS);
+	// }
+	// printf("\nn_type: %d, n_sect: %d, n_desc: %d, n_value: %llu\n", nlist->n_type, nlist->n_sect, nlist->n_desc, nlist->n_value );
+	// if (nlist->n_type & N_STAB && !nlist->n_value)
+	// {
+	// 	return (EXIT_SUCCESS);
+	// }
+	// printf("%d\n", );
+	int c = nlist->n_type;
+	if (c & N_STAB && nlist->n_type != 36)
+	{
+		// printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
+		return (EXIT_SUCCESS);
+	}
+	printf("\nNAME: %s, nlist->type: %d\n", stringtable + nlist->n_un.n_strx, nlist->n_type);
 	switch(nlist->n_type & N_TYPE) {
 		case N_UNDF:
 			type = 'u';
@@ -51,7 +68,15 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 			break;
 		case N_ABS:  type = 'a'; break;
 		case N_SECT:
-			type = 't';
+			// printf("SECT: %d, seg_infos->text_nsect: %d\n", nlist->n_sect, seg_infos->text_nsect);
+			if(nlist->n_sect == seg_infos->text_nsect)
+				type = 't';
+			else if(nlist->n_sect == seg_infos->data_nsect)
+				type = 'd';
+			else if(nlist->n_sect == seg_infos->bss_nsect)
+				type = 'b';
+			else
+				type = 's';
 			// printf("nlist->n_sect: %d, seg_infos->bss_nsect: %d\n", nlist->n_sect, seg_infos->bss_nsect);
 			if (nlist->n_sect == seg_infos->bss_nsect)
 			{
@@ -62,8 +87,8 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 		case N_INDR: type = 'i'; break;
 
 		default:
-			fprintf(stderr, "Invalid symbol type: 0x%x\n", nlist->n_type & N_TYPE);
-			return -1;
+			type = '?';
+			break;
 	}
 	if((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
@@ -169,7 +194,7 @@ t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end, struct mach_header_64
 	lc = (void *)ptr + sizeof(*header);
 	if (ft_check_load(ptr, lc, header->ncmds, header->sizeofcmds))
 		return (NULL);
-	if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, "")))
+	if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, SEG_TEXT)))
 		return (NULL);
 	ft_init_seg_infos(seg_infos);
 	loop = 0;

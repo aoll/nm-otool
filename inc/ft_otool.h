@@ -7,6 +7,7 @@
 #include <mach-o/nlist.h>
 #include <mach-o/fat.h>
 #include <mach-o/ranlib.h>
+#include <mach-o/stab.h>
 #include <ar.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -24,5 +25,14 @@
 #define MIN_LOAD_SIZE		8
 #define ERROR_LOAD_MIN_SIZE	"Mach-O load command with size < 8 bytes\n"
 #define ERROR_LOAD_SIZE		"Mach-O segment load command size is too small\n"
+
+typedef struct s_seg_infos	t_seg_infos;
+
+struct s_seg_infos
+{
+	int text_nsect;
+	int data_nsect;
+	int bss_nsect;
+};
 
 #endif

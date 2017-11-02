@@ -83,11 +83,6 @@ int	print_outpout(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_in
 			else
 				type = 's';
 
-			if (type == 's') {
-				printf("SECT_BSS %s\n", SECT_BSS);
-				printf("SECT: %d, seg_infos->text_nsect: %d, seg_infos->data_nsect: %d\n", nlist->n_sect, seg_infos->text_nsect, seg_infos->data_nsect);
-				/* code */
-			}
 			// printf("nlist->n_sect: %d, seg_infos->bss_nsect: %d\n", nlist->n_sect, seg_infos->bss_nsect);
 			if (nlist->n_sect == seg_infos->bss_nsect)
 			{
@@ -268,19 +263,35 @@ t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end, struct mach_header_64
 	// if (!(segment = ft_find_segment_64(ptr, lc, header->ncmds, SEG_TEXT)))
 		return (NULL);
 	ft_init_seg_infos(seg_infos);
-	loop = 0;
-	section = (void *)segment + sizeof(*segment);
-	while (loop < segment->nsects)
+	int							i;
+
+	i = 0;
+	int index = 0;
+	while (i < header->ncmds)
 	{
-		if(ft_strcmp(section->sectname, SECT_TEXT) == 0)
-			seg_infos->text_nsect = loop + 1;
-		else if(ft_strcmp(section->sectname, SECT_DATA) == 0)
-			seg_infos->data_nsect = loop + 1;
-		else if(ft_strcmp(section->sectname, SECT_BSS) == 0)
-			seg_infos->bss_nsect = loop + 1;
-		section = (void *)section + sizeof(*section);
-		loop++;
+		if (lc->cmd == LC_SEGMENT_64)
+		{
+			segment = (struct segment_command_64*)lc;
+			section = (void *)segment + sizeof(*segment);
+			loop = 0;
+			while (loop < segment->nsects)
+			{
+				if(ft_strcmp(section->sectname, SECT_TEXT) == 0)
+					seg_infos->text_nsect = index + 1;
+				else if(ft_strcmp(section->sectname, SECT_DATA) == 0)
+					seg_infos->data_nsect = index + 1;
+				else if(ft_strcmp(section->sectname, SECT_BSS) == 0)
+					seg_infos->bss_nsect = index + 1;
+				section = (void *)section + sizeof(*section);
+				loop++;
+				index++;
+			}
+		}
+		lc = (void *)lc + lc->cmdsize;
+		i++;
 	}
+
+
 	return (seg_infos);
 }
 

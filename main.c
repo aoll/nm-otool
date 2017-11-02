@@ -144,45 +144,6 @@ int	print_outpout_64(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg
 	return (EXIT_SUCCESS);
 }
 
-int	index_sort(struct nlist_64 *nlist, int nsyms, char *ref, char *stringtable)
-{
-	int		i;
-	int		index;
-	char	*tmp;
-
-	i = 0;
-	tmp = NULL;
-	if (!ref)
-		tmp = stringtable + nlist[0].n_un.n_strx;
-	index = 0;
-	while (i < nsyms)
-	{
-		if (ref)
-		{
-			if (strcmp(ref, stringtable + nlist[i].n_un.n_strx) < 0)
-			{
-				if (tmp && strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
-				{
-					tmp = stringtable + nlist[i].n_un.n_strx;
-					index = i;
-				}
-				else if (!tmp)
-				{
-					tmp = stringtable + nlist[i].n_un.n_strx;
-					index = i;
-				}
-			}
-		}
-		else if (strcmp(tmp, stringtable + nlist[i].n_un.n_strx) > 0)
-		{
-			tmp = stringtable + nlist[i].n_un.n_strx;
-			index = i;
-		}
-		i++;
-	}
-	return (index);
-}
-
 void	sort_ascii(t_sort **tmp, int nsyms)
 {
 	int		i;
@@ -221,6 +182,7 @@ int	init_sort_64(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringt
 	char	*tmp;
 	t_sort	*new;
 
+	printf("NSYMS: %d\n", nsyms);
 	i = 0;
 	while (i < nsyms)
 	{
@@ -238,6 +200,7 @@ int	init_sort_64(t_sort **sort, struct nlist_64 *nlist, int nsyms, char *stringt
 		sort[i] = new;
 		i++;
 	}
+	printf("%s\n", "END STRDUP");
 	return (EXIT_SUCCESS);
 }
 
@@ -296,8 +259,88 @@ t_sort	**array_index_sorted_64(struct nlist_64 *nlist, int nsyms, char *stringta
 		free(sort);
 		return (NULL);
 	}
+	printf("%s\n", "BEGIN SORT");
 	sort_ascii(sort, nsyms);
+	printf("%s\n", "END SORT");
 	return (sort);
+}
+
+struct nlist_64	**ft_copy_nlist64(struct nlist_64 *array, int nsyms)
+{
+	struct nlist_64	**list;
+	struct nlist_64	*l;
+	int				i;
+
+	if (!(list = malloc(sizeof(struct nlist_64 *) * nsyms)))
+		return (NULL);
+	i = 0;
+	while (i < nsyms)
+	{
+		if (!(l = malloc(sizeof(struct nlist_64))))
+		{
+			while (--i >= 0)
+				free(list[i]);
+			free(list);
+			return (NULL);
+		}
+		l->n_type = array[i].n_type;
+		l->n_sect = array[i].n_sect;
+		l->n_value = array[i].n_value;
+		l->n_un.n_strx = array[i].n_un.n_strx;
+		list[i] = l;
+		i++;
+	}
+	return (list);
+}
+
+int	ft_sort64(struct nlist_64 *array, int nsyms, char *stringtable, t_seg_infos *seg_infos)
+{
+	struct nlist_64		**list;
+	struct nlist_64		*tmp;
+	int					i;
+	int					j;
+	int					index;
+	int					cmp;
+
+	if (!(list = ft_copy_nlist64(array, nsyms)))
+		return (EXIT_SUCCESS);
+	j = 0;
+	i = 0;
+	while (j < nsyms)
+	{
+		tmp = NULL;
+		index = 0;
+		i = 0;
+		while (i < nsyms)
+		{
+			if (!tmp && list[i])
+			{
+				tmp = list[i];
+				index = i;
+			}
+			if (list[i])
+			{
+				cmp = ft_strcmp(stringtable + tmp->n_un.n_strx, stringtable + list[i]->n_un.n_strx);
+				if (cmp > 0)
+				{
+					tmp = list[i];
+					index = i;
+				}
+				else if (!cmp && tmp->n_value > list[i]->n_value)
+				{
+					tmp = list[i];
+					index = i;
+				}
+			}
+			i++;
+		}
+		print_outpout_64(tmp, stringtable, seg_infos);
+		free(list[index]);
+		list[index] = NULL;
+		j++;
+	}
+
+	return (EXIT_SUCCESS);
 }
 
 int	sort_and_print_outpout(int nsyms, int symoff, int stroff, void *ptr, t_seg_infos *seg_infos)
@@ -332,6 +375,8 @@ int	sort_and_print_outpout_64(int nsyms, int symoff, int stroff, void *ptr, t_se
 
 	array = ptr + symoff;
 	stringtable = ptr + stroff;
+	ft_sort64(array, nsyms, stringtable, seg_infos);
+	return (0);//wazza
 	if (!(sort = array_index_sorted_64(array, nsyms, stringtable)))
 		return (EXIT_FAILURE);
 	i = 0;

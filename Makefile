@@ -35,9 +35,50 @@ O_DIR= obj
 
 MKDIR = mkdir
 
-C_SRC = main.c
+C_SRC =	array_index_sorted.c \
+		array_index_sorted_64.c \
+		check_valid_file.c \
+		free_sort.c \
+		ft_ar_file.c \
+		ft_check_load.c \
+		ft_copy_nlist.c \
+		ft_copy_nlist64.c \
+		ft_fat_file.c \
+		ft_find_section.c \
+		ft_find_section_64.c \
+		ft_find_segment.c \
+		ft_find_segment_64.c \
+		ft_find_segment_section.c \
+		ft_find_segment_section_64.c \
+		ft_format_archive_name.c \
+		ft_get_adress_str.c \
+		ft_infos_segment.c \
+		ft_infos_segment_64.c \
+		ft_init_seg_infos.c \
+		ft_otool.c \
+		ft_print_adress.c \
+		ft_print_archive_name.c \
+		ft_print_padding_adresse.c \
+		ft_sort.c \
+		ft_sort64.c \
+		handle.c \
+		handle_64.c \
+		handle_64_text.c \
+		handle_text.c \
+		init_sort.c \
+		init_sort_64.c \
+		main.c \
+		print_outpout.c \
+		print_outpout_64.c \
+		print_outpout_format.c \
+		print_outpout_format_64.c \
+		print_text_text_section.c \
+		sort_and_print_outpout.c \
+		sort_and_print_outpout_64.c \
+		sort_ascii.c \
+		swap_uint32.c
 
-VPATH= .:src
+VPATH= src
 
 OBJS= $(C_SRC:%.c=$(O_DIR)/%.o)
 

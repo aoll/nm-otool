@@ -11,14 +11,14 @@
 /* ************************************************************************** */
 
 #include "ft_otool.h"
-
-int		ft_otool(char *ptr, char *ptr_end, char *av, int is_otool);
-void	ft_print_padding_adresse(
-	long int addr, size_t len_padding, char *padding);
-int		ft_check_load(
-	char *ptr, struct load_command *lc, int ncmds, int sizeofcmds);
-struct segment_command_64 *ft_find_segment_64(
-		char *ptr, struct load_command *lc, int ncmds, char *segment_name);
+// 
+// int		ft_otool(char *ptr, char *ptr_end, char *av, int is_otool);
+// void	ft_print_padding_adresse(
+// 	long int addr, size_t len_padding, char *padding);
+// int		ft_check_load(
+// 	char *ptr, struct load_command *lc, int ncmds, int sizeofcmds);
+// struct segment_command_64 *ft_find_segment_64(
+// 		char *ptr, struct load_command *lc, int ncmds, char *segment_name);
 
 int	print_outpout_format(struct nlist *nlist, char type, char *name)
 {

@@ -39,7 +39,7 @@ static int	loop_handle(char *ptr, char *ptr_end,
 	return (EXIT_SUCCESS);
 }
 
-int		handle(char *ptr, char *ptr_end, char *av)
+int			handle(char *ptr, char *ptr_end, char *av)
 {
 	struct mach_header	*header;
 	struct load_command		*lc;

@@ -16,8 +16,8 @@ int	print_outpout_format(struct nlist *nlist, char type, char *name)
 {
 	if (nlist->n_value || type != 'U')
 	{
-		ft_print_padding_adresse(nlist->n_value, ft_strlen(PADDING_STR), PADDING_STR);
-		// printf("%016llx",nlist->n_value);
+		ft_print_padding_adresse(
+			nlist->n_value, ft_strlen(PADDING_STR), PADDING_STR);
 	}
 	else
 	{
@@ -30,4 +30,3 @@ int	print_outpout_format(struct nlist *nlist, char type, char *name)
 	write(1, "\n", 1);
 	return (EXIT_SUCCESS);
 }
-

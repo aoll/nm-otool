@@ -38,7 +38,7 @@ static int	loop_handle_64(char *ptr, char *ptr_end,
 	return (EXIT_SUCCESS);
 }
 
-int		handle_64(char *ptr, char *ptr_end, char *av)
+int			handle_64(char *ptr, char *ptr_end, char *av)
 {
 	struct mach_header_64	*header;
 	struct load_command		*lc;

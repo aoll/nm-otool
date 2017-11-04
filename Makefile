@@ -35,9 +35,7 @@ O_DIR= obj
 
 MKDIR = mkdir
 
-C_SRC =	array_index_sorted.c \
-		array_index_sorted_64.c \
-		check_valid_file.c \
+C_SRC =	check_valid_file.c \
 		free_sort.c \
 		ft_ar_file.c \
 		ft_check_load.c \
@@ -65,8 +63,6 @@ C_SRC =	array_index_sorted.c \
 		handle_64.c \
 		handle_64_text.c \
 		handle_text.c \
-		init_sort.c \
-		init_sort_64.c \
 		main.c \
 		print_outpout.c \
 		print_outpout_64.c \
@@ -75,7 +71,6 @@ C_SRC =	array_index_sorted.c \
 		print_text_text_section.c \
 		sort_and_print_outpout.c \
 		sort_and_print_outpout_64.c \
-		sort_ascii.c \
 		swap_uint32.c
 
 VPATH= src

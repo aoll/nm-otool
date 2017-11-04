@@ -12,49 +12,50 @@
 
 #include "ft_otool.h"
 
-int	print_outpout_64(struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos)
+static void	case_n_sect(
+	struct nlist_64 *nlist, t_seg_infos *seg_infos, char *type)
+{
+	if(nlist->n_sect == seg_infos->text_nsect)
+		*type = 't';
+	else if(nlist->n_sect == seg_infos->data_nsect)
+		*type = 'd';
+	else if(nlist->n_sect == seg_infos->bss_nsect)
+		*type = 'b';
+	else
+		*type = 's';
+	if (nlist->n_sect == seg_infos->bss_nsect)
+	{
+		*type = 'b';
+	}
+}
+
+static void	case_n_undef(struct nlist_64 *nlist, char *type)
+{
+	*type = 'u';
+	if(nlist->n_value != 0)
+		*type = 'c';
+}
+
+int			print_outpout_64(
+	struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos)
 {
 	char type;
+
 	type = '?';
 	int c = nlist->n_type & N_STAB;
 	if ((nlist->n_type & N_STAB) != 0)
-	{
 		return (EXIT_SUCCESS);
-	}
 	c = nlist->n_type & N_TYPE;
 	if (c == N_UNDF)
-	{
-		type = 'u';
-		if(nlist->n_value != 0)
-			type = 'c';
-	}
+		case_n_undef(nlist, &type);
 	else if (c == N_ABS)
-	{
 		type = 'a';
-	}
 	else if (c == N_SECT)
-	{
-		if(nlist->n_sect == seg_infos->text_nsect)
-			type = 't';
-		else if(nlist->n_sect == seg_infos->data_nsect)
-			type = 'd';
-		else if(nlist->n_sect == seg_infos->bss_nsect)
-			type = 'b';
-		else
-			type = 's';
-		if (nlist->n_sect == seg_infos->bss_nsect)
-		{
-			type = 'b';
-		}
-	}
+		case_n_sect(nlist, seg_infos, &type);
 	else if (c == N_PBUD)
-	{
 		type = 'u';
-	}
 	else if (c ==  N_INDR)
-	{
 		type = 'i';
-	}
 	if((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
 	print_outpout_format_64(nlist, type, stringtable + nlist->n_un.n_strx);

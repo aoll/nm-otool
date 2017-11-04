@@ -35,4 +35,3 @@ int	handle_64_text(char *ptr, char *ptr_end, char *av)
 		(void*)ptr + section->offset, section->addr, section->size, 1);
 	return (EXIT_SUCCESS);
 }
-

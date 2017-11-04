@@ -12,7 +12,8 @@
 
 #include "ft_otool.h"
 
-t_sort	**array_index_sorted_64(struct nlist_64 *nlist, int nsyms, char *stringtable)
+t_sort	**array_index_sorted_64(
+	struct nlist_64 *nlist, int nsyms, char *stringtable)
 {
 	t_sort					**sort;
 	int						err;
@@ -24,9 +25,6 @@ t_sort	**array_index_sorted_64(struct nlist_64 *nlist, int nsyms, char *stringta
 		free(sort);
 		return (NULL);
 	}
-	printf("%s\n", "BEGIN SORT");
 	sort_ascii(sort, nsyms);
-	printf("%s\n", "END SORT");
 	return (sort);
 }
-

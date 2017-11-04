@@ -32,6 +32,4 @@ char	*ft_format_archive_name(char *n1, char *n2, char *n3, char *n4)
 	ft_strcpy(s + l1 + l2, n3);
 	ft_strcpy(s + l1 + l2 + l3, n4);
 	return (s);
-
 }
-

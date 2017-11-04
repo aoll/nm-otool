@@ -40,7 +40,7 @@ int	main(int ac, char **av) {
 		return (EXIT_FAILURE);
 	}
 	// ft_nm(ptr);
-	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1], 1);
+	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1], 0);
 	if (munmap(ptr, buf.st_size) < 0)
 	{
 		perror("munmap");

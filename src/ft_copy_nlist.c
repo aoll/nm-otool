@@ -12,6 +12,14 @@
 
 #include "ft_otool.h"
 
+static void	 	ft_set_nlist(struct nlist *l, struct nlist *array, int i)
+{
+	l->n_type = array[i].n_type;
+	l->n_sect = array[i].n_sect;
+	l->n_value = array[i].n_value;
+	l->n_un.n_strx = array[i].n_un.n_strx;
+}
+
 struct nlist	**ft_copy_nlist(struct nlist *array, int nsyms)
 {
 	struct nlist	**list;
@@ -30,13 +38,9 @@ struct nlist	**ft_copy_nlist(struct nlist *array, int nsyms)
 			free(list);
 			return (NULL);
 		}
-		l->n_type = array[i].n_type;
-		l->n_sect = array[i].n_sect;
-		l->n_value = array[i].n_value;
-		l->n_un.n_strx = array[i].n_un.n_strx;
+		ft_set_nlist(l, array, i);
 		list[i] = l;
 		i++;
 	}
 	return (list);
 }
-

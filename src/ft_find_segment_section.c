@@ -16,8 +16,8 @@ struct section *ft_find_segment_section(char *ptr,
 	struct mach_header *header, char *segment_name, char *section_name)
 {
 	struct load_command			*lc;
-	struct segment_command	*seg;
-	struct section			*section;
+	struct segment_command		*seg;
+	struct section				*section;
 
 	lc = (void *)ptr + sizeof(*header);
 	if (!(seg = ft_find_segment(ptr, lc, header->ncmds, segment_name)))
@@ -26,4 +26,3 @@ struct section *ft_find_segment_section(char *ptr,
 		return (NULL);
 	return (section);
 }
-

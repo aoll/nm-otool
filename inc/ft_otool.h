@@ -15,9 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-
 #include "libft.h"
-
 
 #define CONTENT_TEXT_TEXT 	"Contents of (__TEXT,__text) section\n"
 #define PADDING_STR			"00000000"

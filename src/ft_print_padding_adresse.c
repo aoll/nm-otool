@@ -21,8 +21,5 @@ void	ft_print_padding_adresse(
 	if (addr > 0)
 		ft_get_adress_str(addr, &addr_str, len_padding - 1);
 	write(1, addr_str, len_padding);
-	// write(1, "\t", 1);
 	free(addr_str);
 }
-
-

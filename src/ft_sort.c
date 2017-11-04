@@ -54,7 +54,7 @@ int			ft_sort(
 	int					index;
 
 	if (!(list = ft_copy_nlist(array, nsyms)))
-		return (EXIT_SUCCESS);
+		return (EXIT_FAILURE);
 	j = 0;
 	while (j < nsyms)
 	{

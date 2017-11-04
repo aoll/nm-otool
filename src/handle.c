@@ -29,7 +29,7 @@ static int	loop_handle(char *ptr, char *ptr_end,
 		{
 			sym = (struct symtab_command *)lc;
 			sort_and_print_outpout(
-				sym->nsyms, sym->symoff, sym->stroff, ptr, seg_infos);
+				sym, ptr, seg_infos);
 			break ;
 		}
 		lc = (void *)lc + lc->cmdsize;

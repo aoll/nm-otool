@@ -28,7 +28,7 @@ static int	loop_handle_64(char *ptr, char *ptr_end,
 		{
 			sym = (struct symtab_command *)lc;
 			sort_and_print_outpout_64(
-				sym->nsyms, sym->symoff, sym->stroff, ptr, seg_infos);
+				sym, ptr, seg_infos);
 			break ;
 		}
 		lc = (void *)lc + lc->cmdsize;

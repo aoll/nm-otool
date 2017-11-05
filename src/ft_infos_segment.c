@@ -17,7 +17,7 @@ static void	loop_segment(
 {
 	struct segment_command	*segment;
 	struct section			*section;
-	int							loop;
+	uint32_t				loop;
 
 	segment = (struct segment_command *)lc;
 	section = (void *)segment + sizeof(*segment);
@@ -40,13 +40,14 @@ t_seg_infos	*ft_infos_segment(char *ptr, char *ptr_end,
 	struct mach_header *header, struct load_command *lc)
 {
 	t_seg_infos					*seg_infos;
-	int							i;
+	uint32_t					i;
 	int							index;
 
 	if (!(seg_infos = malloc(sizeof(t_seg_infos))))
 		return (NULL);
-	lc = (void *)ptr + sizeof(*header);
-	if (ft_check_load(ptr, lc, header->ncmds, header->sizeofcmds))
+	if ((void *)(lc = (void *)ptr + sizeof(*header)) > (void *)ptr_end)
+		return (NULL);
+	if (ft_check_load(lc, header->ncmds, header->sizeofcmds))
 		return (NULL);
 	ft_init_seg_infos(seg_infos);
 	i = 0;
@@ -54,9 +55,7 @@ t_seg_infos	*ft_infos_segment(char *ptr, char *ptr_end,
 	while (i < header->ncmds)
 	{
 		if (lc->cmd == LC_SEGMENT)
-		{
 			loop_segment(lc, &index, seg_infos);
-		}
 		lc = (void *)lc + lc->cmdsize;
 		i++;
 	}

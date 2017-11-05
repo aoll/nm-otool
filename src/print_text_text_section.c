@@ -15,7 +15,6 @@
 int print_text_text_section(void *ptr, long double addr, int size, int is64)
 {
 	size_t	len;
-	int		a;
 	int		j;
 
 	j = 0;
@@ -43,4 +42,3 @@ int print_text_text_section(void *ptr, long double addr, int size, int is64)
 		write(1, "\n", 1);
 	return (EXIT_SUCCESS);
 }
-

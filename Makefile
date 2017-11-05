@@ -19,8 +19,8 @@ ifeq ($(DEBUG), yes)
 else
 		# CFLAGS= -Wall -Wextra -Werror #-O1 -g #-fsanitize=address -fno-omit-frame-pointer
 		# CFLAGS= -shared -fPIC -Wall -Wextra -Werror
-		CFLAGS=
-		# CFLAGS=  -Wall -Wextra -Werror
+		# CFLAGS=
+		CFLAGS=  -Wall -Wextra -Werror
 endif
 
 NAME = ft_otool

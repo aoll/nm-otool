@@ -13,10 +13,10 @@
 #include "ft_otool.h"
 
 struct section	*ft_find_section(
-	char *ptr, struct segment_command *segment, char *section_name)
+	struct segment_command *segment, char *section_name)
 {
 	struct section			*section;
-	int							loop;
+	uint32_t				loop;
 
 	loop = 0;
 	section = (void *)segment + sizeof(*segment);
@@ -31,4 +31,3 @@ struct section	*ft_find_section(
 	}
 	return (NULL);
 }
-

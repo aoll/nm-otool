@@ -20,9 +20,9 @@ struct section *ft_find_segment_section(char *ptr,
 	struct section				*section;
 
 	lc = (void *)ptr + sizeof(*header);
-	if (!(seg = ft_find_segment(ptr, lc, header->ncmds, segment_name)))
+	if (!(seg = ft_find_segment(lc, header->ncmds, segment_name)))
 		return (NULL);
-	if (!(section = ft_find_section(ptr, seg, section_name)))
+	if (!(section = ft_find_section(seg, section_name)))
 		return (NULL);
 	return (section);
 }

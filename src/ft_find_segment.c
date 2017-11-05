@@ -13,7 +13,7 @@
 #include "ft_otool.h"
 
 struct segment_command *ft_find_segment(
-	char *ptr, struct load_command *lc, int ncmds, char *segment_name)
+	struct load_command *lc, int ncmds, char *segment_name)
 {
 	struct segment_command	*seg;
 	int						i;
@@ -38,4 +38,3 @@ struct segment_command *ft_find_segment(
 	}
 	return (seg);
 }
-

@@ -72,8 +72,8 @@ t_seg_infos					*ft_infos_segment_64(	char *ptr, char *ptr_end,
 	struct mach_header_64 *header, struct load_command *lc);
 t_seg_infos					*ft_infos_segment(char *ptr, char *ptr_end,
 	struct mach_header *header, struct load_command *lc);
-int							handle_64(char *ptr, char *ptr_end, char *av);
-int							handle(char *ptr, char *ptr_end, char *av);
+int							handle_64(char *ptr, char *ptr_end);
+int							handle(char *ptr, char *ptr_end);
 void						ft_print_adress(long double adr);
 void						ft_get_adress_str(
 	long double adr, char **dest, int index);
@@ -82,15 +82,15 @@ void						ft_print_padding_adresse(
 int							print_text_text_section(
 	void *ptr, long double addr, int size, int is64);
 struct section_64			*ft_find_section_64(
-	char *ptr, struct segment_command_64 *segment, char *section_name);
+	struct segment_command_64 *segment, char *section_name);
 struct section				*ft_find_section(
-	char *ptr, struct segment_command *segment, char *section_name);
+	struct segment_command *segment, char *section_name);
 int							ft_check_load(
-	char *ptr, struct load_command *lc, int ncmds, int sizeofcmds);
+	struct load_command *lc, int ncmds, int sizeofcmds);
 struct segment_command_64	*ft_find_segment_64(
-	char *ptr, struct load_command *lc, int ncmds, char *segment_name);
+	struct load_command *lc, int ncmds, char *segment_name);
 struct segment_command		*ft_find_segment(
-	char *ptr, struct load_command *lc, int ncmds, char *segment_name);
+	struct load_command *lc, int ncmds, char *segment_name);
 struct section_64			*ft_find_segment_section_64(char *ptr,
 	struct mach_header_64 *header, char *segment_name, char *section_name);
 struct section				*ft_find_segment_section(char *ptr,

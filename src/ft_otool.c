@@ -22,7 +22,7 @@ static int	ft_loop_error(char *av)
 
 int			ft_otool(char *ptr, char *ptr_end, char *av, int is_otool)
 {
-	int magic_number;
+	unsigned int magic_number;
 
 	if (ptr >= ptr_end)
 		return (ft_loop_error(av));

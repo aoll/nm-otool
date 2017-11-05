@@ -14,7 +14,7 @@
 
 int	check_valid_file(char *ptr, char *ptr_end)
 {
-	int magic_number;
+	unsigned int magic_number;
 
 	if (ptr >= ptr_end)
 		return (EXIT_FAILURE);
@@ -33,4 +33,3 @@ int	check_valid_file(char *ptr, char *ptr_end)
 	}
 	return (EXIT_FAILURE);
 }
-

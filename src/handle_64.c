@@ -15,7 +15,7 @@
 static int	loop_handle_64(char *ptr, char *ptr_end,
 	struct mach_header_64 *header, struct load_command *lc)
 {
- 	int						i;
+ 	uint32_t				i;
 	t_seg_infos				*seg_infos;
 	struct symtab_command	*sym;
 
@@ -38,7 +38,7 @@ static int	loop_handle_64(char *ptr, char *ptr_end,
 	return (EXIT_SUCCESS);
 }
 
-int			handle_64(char *ptr, char *ptr_end, char *av)
+int			handle_64(char *ptr, char *ptr_end)
 {
 	struct mach_header_64	*header;
 	struct load_command		*lc;

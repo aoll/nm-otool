@@ -12,7 +12,7 @@
 
 #include "ft_otool.h"
 
-int	ft_check_load(char *ptr, struct load_command *lc, int ncmds, int sizeofcmds)
+int	ft_check_load(struct load_command *lc, int ncmds, int sizeofcmds)
 {
 	int							i;
 	int							size;
@@ -37,4 +37,3 @@ int	ft_check_load(char *ptr, struct load_command *lc, int ncmds, int sizeofcmds)
 	}
 	return (EXIT_SUCCESS);
 }
-

@@ -12,18 +12,17 @@
 
 #include "ft_otool.h"
 
-int	main(int ac, char **av) {
+static int	execute_is_otool(char *av, int is_otool)
+{
 	int			fd;
 	char		*ptr;
 	struct stat	buf;
 	int			ret;
 
-	if (ac != 2)
-		return (EXIT_FAILURE);
-	if ((fd = open(av[1], O_RDONLY)) < 0)
+	if ((fd = open(av, O_RDONLY)) < 0)
 	{
-		ft_putstr("No access to : ");
-		ft_putstr(av[1]);
+		ft_putstr(NO_ACCESS);
+		ft_putstr(av);
 		ft_putstr("\n");
 		return (EXIT_FAILURE);
 	}
@@ -32,9 +31,24 @@ int	main(int ac, char **av) {
 	if ((ptr = mmap(
 		0, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
 		return (EXIT_FAILURE);
-	// ft_nm(ptr);
-	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av[1], 1);
+	ret = ft_otool(ptr, (void *)ptr + buf.st_size, av, is_otool);
 	if (munmap(ptr, buf.st_size) < 0)
 		return (EXIT_FAILURE);
+	return (ret);
+}
+
+int			main(int ac, char **av)
+{
+	int			ret;
+	int			i;
+
+	if (ac < 2)
+		return (EXIT_FAILURE);
+	i = 1;
+	while (i < ac)
+	{
+		ret = execute_is_otool(av[i], 0);
+		i++;
+	}
 	return (ret);
 }

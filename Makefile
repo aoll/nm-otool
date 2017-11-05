@@ -29,7 +29,11 @@ LIBFT =libft/libft.a
 
 
 
-I_DIR= -I inc/ -I./libft/inc
+I_DIR= -I inc/ -I./libft/inc -I inc/en
+
+ifeq ($(LANG),fr)
+	I_DIR= -I inc/ -I./libft/inc -I inc/fr
+endif
 
 O_DIR= obj
 

@@ -16,8 +16,8 @@ General options:\n\n\
 -g     Display only global (external) symbols\n\n\
 -u     Display only undefined symbols\n\n\
 -U     Don't display undefined symbols\n\n\
--a     Display all symbol table entries, including those  inserted  for\
-use by debuggers\n\n\
--j     Just display the symbol names (no value or type)\n\n"
+-p     Don't sort; display in symbol-table order\n\n\
+-j     Just display the symbol names (no value or type)\n\n\
+-r     Sort in reverse order\n\n"
 
 #endif

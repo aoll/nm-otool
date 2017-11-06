@@ -25,32 +25,36 @@
 #define MIN_LOAD_SIZE		8
 #define HELP_FLAG			-2
 
-typedef struct s_seg_infos	t_seg_infos;
-
-struct s_seg_infos
-{
-	int		text_nsect;
-	int		data_nsect;
-	int		bss_nsect;
-};
-
 typedef struct s_cmd_flag	t_cmd_flag;
 
 struct s_cmd_flag
 {
 	int		is_otool;
-	int		a;
+	int		p;
 	int		u;
 	int		U;
 	int		g;
+	int		j;
+	int		r;
+};
+
+typedef struct s_seg_infos	t_seg_infos;
+
+struct s_seg_infos
+{
+	t_cmd_flag		*cmd_f;
+	int				text_nsect;
+	int				data_nsect;
+	int				bss_nsect;
 };
 
 int							print_outpout_format(
-	struct nlist *nlist, char type, char *name);
+	struct nlist *nlist, char type, char *name, t_cmd_flag *cmd_flag);
 int							print_outpout_format_64(
 	struct nlist_64 *nlist, char type, char *name, t_cmd_flag *cmd_flag);
 int							print_outpout(
-	struct nlist *nlist, char *stringtable, t_seg_infos *seg_infos);
+	struct nlist *nlist, char *stringtable,
+	t_seg_infos *seg_infos, t_cmd_flag *cmd_flag);
 int							print_outpout_64(
 	struct nlist_64 *nlist, char *stringtable,
 	t_seg_infos *seg_infos, t_cmd_flag *cmd_flag);
@@ -63,16 +67,19 @@ int							ft_sort64(struct nlist_64 *array, int nsyms,
 int							ft_sort(
 	struct nlist *array, int nsyms, char *stringtable, t_seg_infos *seg_infos);
 int							sort_and_print_outpout(
-	struct symtab_command *sym, void *ptr, t_seg_infos *seg_infos);
+	struct symtab_command *sym, void *ptr, void *ptr_end,
+	t_seg_infos *seg_infos);
 int							sort_and_print_outpout_64(
-	struct symtab_command *sym, void *ptr, t_seg_infos *seg_infos);
+	struct symtab_command *sym, void *ptr, void *ptr_end,
+	t_seg_infos *seg_infos);
 void						ft_init_seg_infos(t_seg_infos *seg_infos);
 t_seg_infos					*ft_infos_segment_64(	char *ptr, char *ptr_end,
 	struct mach_header_64 *header, struct load_command *lc);
 t_seg_infos					*ft_infos_segment(char *ptr, char *ptr_end,
 	struct mach_header *header, struct load_command *lc);
-int							handle_64(char *ptr, char *ptr_end);
-int							handle(char *ptr, char *ptr_end);
+int							handle_64(
+	char *ptr, char *ptr_end, t_cmd_flag *cmd_f);
+int							handle(char *ptr, char *ptr_end, t_cmd_flag *cmd_f);
 void						ft_print_adress(long double adr);
 void						ft_get_adress_str(
 	long double adr, char **dest, int index);

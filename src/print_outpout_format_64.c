@@ -24,13 +24,13 @@ int	print_outpout_format_64(
 		}
 		else
 		{
-			write(1, PADDING_SPACE_64, ft_strlen(PADDING_SPACE_64));
+			write(STDOUT, PADDING_SPACE_64, ft_strlen(PADDING_SPACE_64));
 		}
-		write(1, " ", 1);
-		write(1, &type, 1);
-		write(1, " ", 1);
+		write(STDOUT, " ", 1);
+		write(STDOUT, &type, 1);
+		write(STDOUT, " ", 1);
 	}
-	write(1, name, ft_strlen(name));
-	write(1, "\n", 1);
+	write(STDOUT, name, ft_strlen(name));
+	write(STDOUT, "\n", 1);
 	return (EXIT_SUCCESS);
 }

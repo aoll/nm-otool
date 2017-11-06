@@ -57,13 +57,11 @@ static int	set_flag(char *av, t_cmd_flag *cmd_f)
 {
 	av++;
 	if (!*av)
-	{
 		return (error_flag(av));
-	}
 	while (*av)
 	{
-		if (*av == 'a')
-			cmd_f->a = 1;
+		if (*av == 'p')
+			cmd_f->p = 1;
 		else if (*av == 'u')
 			cmd_f->u = 1;
 		else if (*av == 'U')
@@ -72,10 +70,10 @@ static int	set_flag(char *av, t_cmd_flag *cmd_f)
 			cmd_f->g = 1;
 		else if (*av == 'j')
 			cmd_f->j = 1;
+		else if (*av == 'r')
+			cmd_f->r = 1;
 		else
-		{
 			return (error_flag(av));
-		}
 		av++;
 	}
 	return (EXIT_SUCCESS);
@@ -87,10 +85,12 @@ static int	set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f)
 	int err;
 
 	cmd_f->is_otool = 0;
-	cmd_f->a = 0;
+	cmd_f->p = 0;
 	cmd_f->g = 0;
 	cmd_f->u = 0;
 	cmd_f->U = 0;
+	cmd_f->j = 0;
+	cmd_f->r = 0;
 	i = 1;
 	while (i < ac)
 	{
@@ -102,7 +102,6 @@ static int	set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f)
 			return (-1);
 		i++;
 	}
-	print_outpout_64(NULL, NULL, NULL, cmd_f);
 	return (i);
 }
 

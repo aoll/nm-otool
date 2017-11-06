@@ -12,7 +12,9 @@
 
 #include "ft_otool.h"
 
-static void	case_n_sect(struct nlist *nlist, t_seg_infos *seg_infos, char *type)
+
+static void	case_n_sect(
+	struct nlist *nlist, t_seg_infos *seg_infos, char *type)
 {
 	if(nlist->n_sect == seg_infos->text_nsect)
 		*type = 't';
@@ -35,15 +37,12 @@ static void	case_n_undef(struct nlist *nlist, char *type)
 		*type = 'c';
 }
 
-int			print_outpout(
-	struct nlist *nlist, char *stringtable, t_seg_infos *seg_infos)
+static int	set_type(struct nlist *nlist, t_seg_infos *seg_infos)
 {
-	char type;
+	char				type;
+	int					c;
 
 	type = '?';
-	int c = nlist->n_type & N_STAB;
-	if ((nlist->n_type & N_STAB) != 0)
-		return (EXIT_SUCCESS);
 	c = nlist->n_type & N_TYPE;
 	if (c == N_UNDF)
 		case_n_undef(nlist, &type);
@@ -55,8 +54,27 @@ int			print_outpout(
 		type = 'u';
 	else if (c ==  N_INDR)
 		type = 'i';
+	return (type);
+}
+
+int			print_outpout(
+	struct nlist *nlist, char *stringtable,
+	t_seg_infos *seg_infos, t_cmd_flag *cmd_f)
+{
+	char				type;
+
+	if ((nlist->n_type & N_STAB) != 0)
+		return (EXIT_SUCCESS);
+	type = set_type(nlist, seg_infos);
+	if (cmd_f->u && type != 'u')
+		return (EXIT_SUCCESS);
+	if (cmd_f->U && type == 'u')
+		return (EXIT_SUCCESS);
+	if (cmd_f->g && !(nlist->n_type & N_EXT))
+		return (EXIT_SUCCESS);
 	if((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
-	print_outpout_format(nlist, type, stringtable + nlist->n_un.n_strx);
+	print_outpout_format(
+		nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);
 	return (EXIT_SUCCESS);
 }

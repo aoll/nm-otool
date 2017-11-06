@@ -23,6 +23,7 @@
 #define PADDING_SPACE_64	"                "
 #define PADDING_SPACE		"        "
 #define MIN_LOAD_SIZE		8
+#define HELP_FLAG			-2
 
 typedef struct s_seg_infos	t_seg_infos;
 
@@ -46,17 +47,12 @@ struct s_cmd_flag
 int							print_outpout_format(
 	struct nlist *nlist, char type, char *name);
 int							print_outpout_format_64(
-	struct nlist_64 *nlist, char type, char *name);
+	struct nlist_64 *nlist, char type, char *name, t_cmd_flag *cmd_flag);
 int							print_outpout(
 	struct nlist *nlist, char *stringtable, t_seg_infos *seg_infos);
 int							print_outpout_64(
-	struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos);
-	// void						sort_ascii(t_sort **tmp, int nsyms);
-	// int							free_sort(t_sort **sort, int index);
-	// t_sort						**array_index_sorted(
-	// 	struct nlist *nlist, int nsyms, char *stringtable);
-	// t_sort						**array_index_sorted_64(
-	// 	struct nlist_64 *nlist, int nsyms, char *stringtable);
+	struct nlist_64 *nlist, char *stringtable,
+	t_seg_infos *seg_infos, t_cmd_flag *cmd_flag);
 struct nlist_64				**ft_copy_nlist64(
 	struct nlist_64 *array, int nsyms);
 struct nlist				**ft_copy_nlist(
@@ -104,11 +100,11 @@ char						*ft_format_archive_name(
 void						ft_print_archive_name(char *s1, char *s2);
 int							check_valid_file(char *ptr, char *ptr_end);
 int							ft_ar_file(
-	char *ptr, char *ptr_end, char *av, int is_otool);
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f);
 uint32_t					swap_uint32(uint32_t val);
 int							ft_fat_file(
-	char *ptr, char *ptr_end, char *av, int is_otool);
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f);
 int							ft_otool(
-	char *ptr, char *ptr_end, char *av, int is_otool);
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f);
 
 #endif

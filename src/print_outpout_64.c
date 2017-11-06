@@ -37,10 +37,17 @@ static void	case_n_undef(struct nlist_64 *nlist, char *type)
 }
 
 int			print_outpout_64(
-	struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos)
+	struct nlist_64 *nlist, char *stringtable,
+	t_seg_infos *seg_infos, t_cmd_flag *cmd_flag)
 {
-	char type;
+	char				type;
+	static t_cmd_flag	*cmd_f = NULL;
 
+	if (!cmd_f && cmd_flag)
+	{
+		cmd_f = cmd_flag;
+		return (EXIT_SUCCESS);
+	}
 	type = '?';
 	int c = nlist->n_type & N_STAB;
 	if ((nlist->n_type & N_STAB) != 0)
@@ -56,8 +63,15 @@ int			print_outpout_64(
 		type = 'u';
 	else if (c ==  N_INDR)
 		type = 'i';
+	if (cmd_f->u && type != 'u')
+		return (EXIT_SUCCESS);
+	if (cmd_f->U && type == 'u')
+		return (EXIT_SUCCESS);
+	if (cmd_f->g && !(nlist->n_type & N_EXT))
+		return (EXIT_SUCCESS);
 	if((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
-	print_outpout_format_64(nlist, type, stringtable + nlist->n_un.n_strx);
+	print_outpout_format_64(
+		nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);
 	return (EXIT_SUCCESS);
 }

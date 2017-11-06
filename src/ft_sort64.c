@@ -47,7 +47,8 @@ static int	loop_sort64(struct nlist_64 **list, int nsyms, char *stringtable)
 }
 
 int			ft_sort64(
-	struct nlist_64 *array, int nsyms, char *stringtable, t_seg_infos *seg_infos)
+	struct nlist_64 *array, int nsyms,
+	char *stringtable, t_seg_infos *seg_infos)
 {
 	struct nlist_64		**list;
 	int					j;
@@ -59,7 +60,7 @@ int			ft_sort64(
 	while (j < nsyms)
 	{
 		index = loop_sort64(list, nsyms, stringtable);
-		print_outpout_64(list[index], stringtable, seg_infos);
+		print_outpout_64(list[index], stringtable, seg_infos, NULL);
 		free(list[index]);
 		list[index] = NULL;
 		j++;

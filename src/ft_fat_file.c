@@ -12,7 +12,7 @@
 
 #include "ft_otool.h"
 
-int	ft_fat_file(char *ptr, char *ptr_end, char *av, int is_otool)
+int	ft_fat_file(char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 {
 	struct fat_header	*f_h;
 	struct fat_arch		*f_a;
@@ -30,7 +30,7 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av, int is_otool)
 			offset = swap_uint32(f_a->offset);
 			if (offset >= 0)
 			{
-				return (ft_otool(ptr + offset, ptr_end, av, is_otool));
+				return (ft_otool(ptr + offset, ptr_end, av, cmd_f));
 			}
 		}
 		f_a = (void *)f_a + sizeof(*f_a);
@@ -38,4 +38,3 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av, int is_otool)
 	}
 	return (EXIT_SUCCESS);
 }
-

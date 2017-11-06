@@ -74,7 +74,8 @@ C_SRC =	check_valid_file.c \
 		print_text_text_section.c \
 		sort_and_print_outpout.c \
 		sort_and_print_outpout_64.c \
-		swap_uint32.c
+		swap_uint32.c \
+		set_cmd_flag.c
 
 VPATH= src
 

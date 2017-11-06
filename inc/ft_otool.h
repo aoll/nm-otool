@@ -48,6 +48,7 @@ struct s_seg_infos
 	int				bss_nsect;
 };
 
+int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f);
 int							print_outpout_format(
 	struct nlist *nlist, char type, char *name, t_cmd_flag *cmd_flag);
 int							print_outpout_format_64(

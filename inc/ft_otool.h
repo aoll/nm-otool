@@ -33,12 +33,14 @@ struct s_seg_infos
 	int		bss_nsect;
 };
 
-typedef struct s_sort		t_sort;
+typedef struct s_cmd_flag	t_cmd_flag;
 
-struct s_sort
+struct s_cmd_flag
 {
-	char	*name;
-	int		index;
+	int		is_otool;
+	int		u;
+	int		U;
+	int		g;
 };
 
 int							print_outpout_format(
@@ -49,12 +51,12 @@ int							print_outpout(
 	struct nlist *nlist, char *stringtable, t_seg_infos *seg_infos);
 int							print_outpout_64(
 	struct nlist_64 *nlist, char *stringtable, t_seg_infos *seg_infos);
-void						sort_ascii(t_sort **tmp, int nsyms);
-int							free_sort(t_sort **sort, int index);
-t_sort						**array_index_sorted(
-	struct nlist *nlist, int nsyms, char *stringtable);
-t_sort						**array_index_sorted_64(
-	struct nlist_64 *nlist, int nsyms, char *stringtable);
+	// void						sort_ascii(t_sort **tmp, int nsyms);
+	// int							free_sort(t_sort **sort, int index);
+	// t_sort						**array_index_sorted(
+	// 	struct nlist *nlist, int nsyms, char *stringtable);
+	// t_sort						**array_index_sorted_64(
+	// 	struct nlist_64 *nlist, int nsyms, char *stringtable);
 struct nlist_64				**ft_copy_nlist64(
 	struct nlist_64 *array, int nsyms);
 struct nlist				**ft_copy_nlist(

@@ -40,7 +40,6 @@ O_DIR= obj
 MKDIR = mkdir
 
 C_SRC =	check_valid_file.c \
-		free_sort.c \
 		ft_ar_file.c \
 		ft_check_load.c \
 		ft_copy_nlist.c \

@@ -41,7 +41,9 @@ int			main(int ac, char **av)
 {
 	int			ret;
 	int			i;
+	t_cmd_flag	cmd_f;
 
+	cmd_f.is_otool = 0;
 	if (ac < 2)
 		return (EXIT_FAILURE);
 	i = 1;

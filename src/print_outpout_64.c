@@ -50,7 +50,7 @@ int			print_outpout_64(
 	}
 	type = '?';
 	int c = nlist->n_type & N_STAB;
-	if ((nlist->n_type & N_STAB) != 0)
+	if ((nlist->n_type & N_STAB) != 0 && !cmd_f->a)
 		return (EXIT_SUCCESS);
 	c = nlist->n_type & N_TYPE;
 	if (c == N_UNDF)

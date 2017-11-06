@@ -15,7 +15,7 @@
 int	print_outpout_format_64(
 	struct nlist_64 *nlist, char type, char *name, t_cmd_flag *cmd_flag)
 {
-	if (!cmd_flag->u)
+	if (!cmd_flag->u && !cmd_flag->j)
 	{
 		if (nlist->n_value || type != 'U')
 		{

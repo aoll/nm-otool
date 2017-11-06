@@ -62,12 +62,16 @@ static int	set_flag(char *av, t_cmd_flag *cmd_f)
 	}
 	while (*av)
 	{
-		if (*av == 'u')
+		if (*av == 'a')
+			cmd_f->a = 1;
+		else if (*av == 'u')
 			cmd_f->u = 1;
 		else if (*av == 'U')
 			cmd_f->U = 1;
 		else if (*av == 'g')
 			cmd_f->g = 1;
+		else if (*av == 'j')
+			cmd_f->j = 1;
 		else
 		{
 			return (error_flag(av));
@@ -83,6 +87,7 @@ static int	set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f)
 	int err;
 
 	cmd_f->is_otool = 0;
+	cmd_f->a = 0;
 	cmd_f->g = 0;
 	cmd_f->u = 0;
 	cmd_f->U = 0;

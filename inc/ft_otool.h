@@ -39,6 +39,7 @@ typedef struct s_cmd_flag	t_cmd_flag;
 struct s_cmd_flag
 {
 	int		is_otool;
+	int		a;
 	int		u;
 	int		U;
 	int		g;

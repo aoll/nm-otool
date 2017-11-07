@@ -8,7 +8,7 @@
 comme un objet valide\n"
 #define NO_ACCESS			"Acces refuse pour : "
 #define ERROR_FLAG			"ft_nm: Argument inconnu"
-#define TYPE_HELP			"Entrez './ft_nm -help' pour plus d'informations\n"
+#define TYPE_HELP			"Entrez './ft_nm -aide' pour plus d'informations\n"
 #define HELP				"-aide"
 #define HELP_MESS			"USAGE: nm [options] <fichier>\n\n\
 Options:\n\n\

@@ -23,9 +23,9 @@ else
 		CFLAGS=  -Wall -Wextra -Werror
 endif
 
-NAME = ft_otool
+NAME_OTOOL = ft_otool
 
-NAMENM = ft_nm
+NAME_NM = ft_nm
 
 LIBFT =libft/libft.a
 
@@ -86,8 +86,8 @@ OBJS= $(C_SRC:%.c=$(O_DIR)/%.o)
 
 all :
 	make -C libft
-	make -j $(NAME)
-	make -j $(NAMENM)
+	make -j $(NAME_OTOOL)
+	make -j $(NAME_NM)
 
 ifeq ($(DEBUG),yes)
 				@echo "Generation mode debug"
@@ -95,10 +95,10 @@ else
 				@echo "Generation mode release"
 endif
 
-$(NAME):$(OBJS)
+$(NAME_OTOOL):$(OBJS)
 				$(CC) $(CFLAGS) $(I_DIR) $^ src/main_otool.c $(LIBFT) -o $@
 
-$(NAMENM):$(OBJS)
+$(NAME_NM):$(OBJS)
 		$(CC) $(CFLAGS) $(I_DIR) $^ src/main_nm.c $(LIBFT) -o $@
 
 $(O_DIR)/%.o: %.c
@@ -113,7 +113,7 @@ clean :
 		make clean -C libft
 
 fclean : clean
-		@rm -rf $(NAME) $(NAME2)
+		@rm -rf $(NAME_OTOOL) $(NAME_NM)
 		make fclean -C libft
 
 re : fclean all

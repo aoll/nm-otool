@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:20:28 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:33:22 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-struct segment_command_64 *ft_find_segment_64(
+struct segment_command_64	*ft_find_segment_64(
 	struct load_command *lc, int ncmds, char *segment_name)
 {
 	struct segment_command_64	*seg;

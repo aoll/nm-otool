@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:22:59 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:23:00 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,3 @@ int	handle_text(char *ptr, char *ptr_end, char *av)
 		(void*)ptr + section->offset, section->addr, section->size, 0);
 	return (EXIT_SUCCESS);
 }
-

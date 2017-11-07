@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:21:30 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:25:16 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ static void	loop_segment64(
 	loop = 0;
 	while (loop < segment->nsects)
 	{
-		if(ft_strcmp(section->sectname, SECT_TEXT) == 0)
+		if (ft_strcmp(section->sectname, SECT_TEXT) == 0)
 			seg_infos->text_nsect = *index + 1;
-		else if(ft_strcmp(section->sectname, SECT_DATA) == 0)
+		else if (ft_strcmp(section->sectname, SECT_DATA) == 0)
 			seg_infos->data_nsect = *index + 1;
-		else if(ft_strcmp(section->sectname, SECT_BSS) == 0)
+		else if (ft_strcmp(section->sectname, SECT_BSS) == 0)
 			seg_infos->bss_nsect = *index + 1;
 		section = (void *)section + sizeof(*section);
 		loop++;

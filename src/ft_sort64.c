@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:22:40 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:37:50 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ int			ft_sort64(
 			index = loop_sort64_reverse(list, nsyms, stringtable);
 		else
 			index = loop_sort64(list, nsyms, stringtable);
-
 		print_outpout_64(list[index], stringtable, seg_infos, seg_infos->cmd_f);
 		free(list[index]);
 		list[index] = NULL;

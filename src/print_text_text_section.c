@@ -5,14 +5,21 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:24:10 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:41:32 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-int print_text_text_section(void *ptr, long double addr, int size, int is64)
+static void	print_chariot(int j)
+{
+	if (j % 16 != 0)
+		write(1, "\n", 1);
+}
+
+int			print_text_text_section(
+	void *ptr, long double addr, int size, int is64)
 {
 	size_t	len;
 	int		j;
@@ -32,13 +39,11 @@ int print_text_text_section(void *ptr, long double addr, int size, int is64)
 			write(1, "0", 1);
 		ft_print_adress(*(unsigned char *)ptr);
 		write(1, " ", 1);
-		j++;
-		if (j % 16 == 0)
+		if (++j % 16 == 0)
 			write(1, "\n", 1);
 		addr++;
 		ptr++;
- 	}
-	if (j % 16 != 0)
-		write(1, "\n", 1);
+	}
+	print_chariot(j);
 	return (EXIT_SUCCESS);
 }

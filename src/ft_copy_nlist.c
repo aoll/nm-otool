@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:19:49 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:31:58 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-static void	 	ft_set_nlist(struct nlist *l, struct nlist *array, int i)
+static void		ft_set_nlist(struct nlist *l, struct nlist *array, int i)
 {
 	l->n_type = array[i].n_type;
 	l->n_sect = array[i].n_sect;

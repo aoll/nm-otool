@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:20:11 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:32:27 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-struct section_64 *ft_find_section_64(
+struct section_64	*ft_find_section_64(
 	struct segment_command_64 *segment, char *section_name)
 {
 	struct section_64			*section;

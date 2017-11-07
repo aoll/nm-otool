@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:19:56 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:31:20 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-static void	 	ft_set_nlist64(
+static void			ft_set_nlist64(
 	struct nlist_64 *l, struct nlist_64 *array, int i)
 {
 	l->n_type = array[i].n_type;
@@ -21,7 +21,7 @@ static void	 	ft_set_nlist64(
 	l->n_un.n_strx = array[i].n_un.n_strx;
 }
 
-struct nlist_64	**ft_copy_nlist64(struct nlist_64 *array, int nsyms)
+struct nlist_64		**ft_copy_nlist64(struct nlist_64 *array, int nsyms)
 {
 	struct nlist_64	**list;
 	struct nlist_64	*l;

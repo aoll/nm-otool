@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:19:08 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:19:10 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,3 @@ uint32_t	swap_uint32(uint32_t val)
 	val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
 	return (val << 16) | (val >> 16);
 }
-
-

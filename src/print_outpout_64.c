@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:23:38 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:39:11 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 static void	case_n_sect(
 	struct nlist_64 *nlist, t_seg_infos *seg_infos, char *type)
 {
-	if(nlist->n_sect == seg_infos->text_nsect)
+	if (nlist->n_sect == seg_infos->text_nsect)
 		*type = 't';
-	else if(nlist->n_sect == seg_infos->data_nsect)
+	else if (nlist->n_sect == seg_infos->data_nsect)
 		*type = 'd';
-	else if(nlist->n_sect == seg_infos->bss_nsect)
+	else if (nlist->n_sect == seg_infos->bss_nsect)
 		*type = 'b';
 	else
 		*type = 's';
@@ -32,7 +32,7 @@ static void	case_n_sect(
 static void	case_n_undef(struct nlist_64 *nlist, char *type)
 {
 	*type = 'u';
-	if(nlist->n_value != 0)
+	if (nlist->n_value != 0)
 		*type = 'c';
 }
 
@@ -51,7 +51,7 @@ static int	set_type(struct nlist_64 *nlist, t_seg_infos *seg_infos)
 		case_n_sect(nlist, seg_infos, &type);
 	else if (c == N_PBUD)
 		type = 'u';
-	else if (c ==  N_INDR)
+	else if (c == N_INDR)
 		type = 'i';
 	return (type);
 }
@@ -71,7 +71,7 @@ int			print_outpout_64(
 		return (EXIT_SUCCESS);
 	if (cmd_f->g && !(nlist->n_type & N_EXT))
 		return (EXIT_SUCCESS);
-	if((nlist->n_type & N_EXT) && type != '?')
+	if ((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
 	print_outpout_format_64(
 		nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);

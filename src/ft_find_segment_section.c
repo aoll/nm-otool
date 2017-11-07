@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:20:59 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:33:15 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-struct section *ft_find_segment_section(char *ptr,
+struct section	*ft_find_segment_section(char *ptr,
 	struct mach_header *header, char *segment_name, char *section_name)
 {
 	struct load_command			*lc;

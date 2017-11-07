@@ -5,14 +5,42 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 11/03/17 12:34:50 by aollivie            #+#    #+#             */
-/*   Updated: 11/03/17 12:34:50 by aollivie           ###   ########.fr       */
+/*   Created: 2017/11/07 16:20:03 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:33:40 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-int	ft_fat_file(char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
+static int	ft_fat_file_all(
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
+{
+	t_fat_infos f_i;
+
+	f_i.f_h = (struct fat_header *)ptr;
+	f_i.nb_arch = swap_uint32(f_i.f_h->nfat_arch);
+	f_i.f_a = (void *)f_i.f_h + sizeof(*f_i.f_h);
+	f_i.offset = 0;
+	while (f_i.nb_arch)
+	{
+		f_i.offset = swap_uint32(f_i.f_a->offset);
+		if (!check_valid_file(ptr + f_i.offset, ptr_end) && f_i.offset >= 0)
+		{
+			if (!cmd_f->is_otool)
+			{
+				ft_putstr(av);
+				ft_putstr(":\n");
+			}
+			ft_otool(ptr + f_i.offset, ptr_end, av, cmd_f);
+		}
+		f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a);
+		f_i.nb_arch--;
+	}
+	return (EXIT_SUCCESS);
+}
+
+int			ft_fat_file(
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 {
 	struct fat_header	*f_h;
 	struct fat_arch		*f_a;
@@ -29,12 +57,10 @@ int	ft_fat_file(char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 		{
 			offset = swap_uint32(f_a->offset);
 			if (offset >= 0)
-			{
 				return (ft_otool(ptr + offset, ptr_end, av, cmd_f));
-			}
 		}
 		f_a = (void *)f_a + sizeof(*f_a);
 		nb_arch--;
 	}
-	return (EXIT_SUCCESS);
+	return (ft_fat_file_all(ptr, ptr_end, av, cmd_f));
 }

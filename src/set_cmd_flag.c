@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:17:20 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:17:24 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/07 16:46:39 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	set_flag(char *av, t_cmd_flag *cmd_f)
 		else if (*av == 'u')
 			cmd_f->u = 1;
 		else if (*av == 'U')
-			cmd_f->U = 1;
+			cmd_f->uu = 1;
 		else if (*av == 'g')
 			cmd_f->g = 1;
 		else if (*av == 'j')
@@ -63,7 +63,7 @@ int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f, int is_otool)
 	cmd_f->p = 0;
 	cmd_f->g = 0;
 	cmd_f->u = 0;
-	cmd_f->U = 0;
+	cmd_f->uu = 0;
 	cmd_f->j = 0;
 	cmd_f->r = 0;
 	i = 1;

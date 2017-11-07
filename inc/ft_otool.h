@@ -1,56 +1,79 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_otool.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/07 16:52:25 by aollivie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FT_OTOOL_H
-#define FT_OTOOL_H
+# define FT_OTOOL_H
 
-#include <stdio.h>
-#include <sys/mman.h>
-#include <mach-o/loader.h>
-#include <mach-o/nlist.h>
-#include <mach-o/fat.h>
-#include <mach-o/ranlib.h>
-#include <mach-o/stab.h>
-#include <ar.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include "libft.h"
-#include "ft_mess.h"
+# include <stdio.h>
+# include <sys/mman.h>
+# include <mach-o/loader.h>
+# include <mach-o/nlist.h>
+# include <mach-o/fat.h>
+# include <mach-o/ranlib.h>
+# include <mach-o/stab.h>
+# include <ar.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include "libft.h"
+# include "ft_mess.h"
 
-#define PADDING_STR			"00000000"
-#define PADDING_STR_64		"0000000000000000"
-#define PADDING_SPACE_64	"                "
-#define PADDING_SPACE		"        "
-#define MIN_LOAD_SIZE		8
-#define HELP_FLAG			-2
-#define	IS_OTOOL			1
-#define	IS_NM				0
+# define PADDING_STR		"00000000"
+# define PADDING_STR_64		"0000000000000000"
+# define PADDING_SPACE_64	"                "
+# define PADDING_SPACE		"        "
+# define MIN_LOAD_SIZE		8
+# define HELP_FLAG			-2
+# define IS_OTOOL			1
+# define IS_NM				0
 
 typedef struct s_cmd_flag	t_cmd_flag;
 
-struct s_cmd_flag
+struct						s_cmd_flag
 {
-	int		is_otool;
-	int		p;
-	int		u;
-	int		U;
-	int		g;
-	int		j;
-	int		r;
+	int						is_otool;
+	int						p;
+	int						u;
+	int						uu;
+	int						g;
+	int						j;
+	int						r;
 };
 
 typedef struct s_seg_infos	t_seg_infos;
 
-struct s_seg_infos
+struct						s_seg_infos
 {
-	t_cmd_flag		*cmd_f;
-	int				text_nsect;
-	int				data_nsect;
-	int				bss_nsect;
+	t_cmd_flag				*cmd_f;
+	int						text_nsect;
+	int						data_nsect;
+	int						bss_nsect;
 };
 
-int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
+typedef struct s_fat_infos	t_fat_infos;
+
+struct						s_fat_infos
+{
+	struct fat_header		*f_h;
+	struct fat_arch			*f_a;
+	int						nb_arch;
+	int						offset;
+	char					*s;
+};
+
+int							set_cmd_flag(
+	int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
 int							print_outpout_format(
 	struct nlist *nlist, char type, char *name, t_cmd_flag *cmd_flag);
 int							print_outpout_format_64(
@@ -76,7 +99,7 @@ int							sort_and_print_outpout_64(
 	struct symtab_command *sym, void *ptr, void *ptr_end,
 	t_seg_infos *seg_infos);
 void						ft_init_seg_infos(t_seg_infos *seg_infos);
-t_seg_infos					*ft_infos_segment_64(	char *ptr, char *ptr_end,
+t_seg_infos					*ft_infos_segment_64(char *ptr, char *ptr_end,
 	struct mach_header_64 *header, struct load_command *lc);
 t_seg_infos					*ft_infos_segment(char *ptr, char *ptr_end,
 	struct mach_header *header, struct load_command *lc);

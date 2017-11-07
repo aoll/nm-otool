@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:24:01 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:38:34 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/07 16:46:19 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int			print_outpout(
 	type = set_type(nlist, seg_infos);
 	if (cmd_f->u && type != 'u')
 		return (EXIT_SUCCESS);
-	if (cmd_f->U && type == 'u')
+	if (cmd_f->uu && type == 'u')
 		return (EXIT_SUCCESS);
 	if (cmd_f->g && !(nlist->n_type & N_EXT))
 		return (EXIT_SUCCESS);

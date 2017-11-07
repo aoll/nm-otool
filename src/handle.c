@@ -35,7 +35,6 @@ static int	loop_handle(char *ptr, char *ptr_end,
 			break ;
 		}
 		lc = (void *)lc + lc->cmdsize;
-		i++;
 	}
 	free(seg_infos);
 	return (EXIT_SUCCESS);

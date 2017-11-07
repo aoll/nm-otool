@@ -25,6 +25,8 @@ endif
 
 NAME = ft_otool
 
+NAMENM = ft_nm
+
 LIBFT =libft/libft.a
 
 
@@ -66,7 +68,6 @@ C_SRC =	check_valid_file.c \
 		handle_64.c \
 		handle_64_text.c \
 		handle_text.c \
-		main.c \
 		print_outpout.c \
 		print_outpout_64.c \
 		print_outpout_format.c \
@@ -86,6 +87,7 @@ OBJS= $(C_SRC:%.c=$(O_DIR)/%.o)
 all :
 	make -C libft
 	make -j $(NAME)
+	make -j $(NAMENM)
 
 ifeq ($(DEBUG),yes)
 				@echo "Generation mode debug"
@@ -94,8 +96,10 @@ else
 endif
 
 $(NAME):$(OBJS)
-				$(CC) $(CFLAGS) $(I_DIR) $^  $(LIBFT) -o $@
+				$(CC) $(CFLAGS) $(I_DIR) $^ src/main_otool.c $(LIBFT) -o $@
 
+$(NAMENM):$(OBJS)
+		$(CC) $(CFLAGS) $(I_DIR) $^ src/main_nm.c $(LIBFT) -o $@
 
 $(O_DIR)/%.o: %.c
 				$(CC) $(CFLAGS) $(I_DIR) -c $< -o $@
@@ -109,7 +113,7 @@ clean :
 		make clean -C libft
 
 fclean : clean
-		@rm -rf $(NAME) libft_malloc.so
+		@rm -rf $(NAME) $(NAME2)
 		make fclean -C libft
 
 re : fclean all

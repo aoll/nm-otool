@@ -24,6 +24,8 @@
 #define PADDING_SPACE		"        "
 #define MIN_LOAD_SIZE		8
 #define HELP_FLAG			-2
+#define	IS_OTOOL			1
+#define	IS_NM				0
 
 typedef struct s_cmd_flag	t_cmd_flag;
 
@@ -48,7 +50,7 @@ struct s_seg_infos
 	int				bss_nsect;
 };
 
-int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f);
+int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
 int							print_outpout_format(
 	struct nlist *nlist, char type, char *name, t_cmd_flag *cmd_flag);
 int							print_outpout_format_64(

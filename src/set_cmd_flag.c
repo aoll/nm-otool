@@ -54,12 +54,12 @@ static int	set_flag(char *av, t_cmd_flag *cmd_f)
 	return (EXIT_SUCCESS);
 }
 
-int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f)
+int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f, int is_otool)
 {
 	int i;
 	int err;
 
-	cmd_f->is_otool = 0;
+	cmd_f->is_otool = is_otool;
 	cmd_f->p = 0;
 	cmd_f->g = 0;
 	cmd_f->u = 0;
@@ -67,6 +67,8 @@ int			set_cmd_flag(int ac, char **av, t_cmd_flag *cmd_f)
 	cmd_f->j = 0;
 	cmd_f->r = 0;
 	i = 1;
+	if (is_otool)
+		return (i);
 	while (i < ac)
 	{
 		if (*av[i] != '-')

@@ -42,6 +42,7 @@ typedef struct s_cmd_flag	t_cmd_flag;
 
 struct						s_cmd_flag
 {
+	int						is_indian;
 	int						is_otool;
 	int						p;
 	int						u;

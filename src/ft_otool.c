@@ -12,7 +12,7 @@
 
 #include "ft_otool.h"
 
-static int	ft_loop_error(char *av)
+static int			ft_loop_error(char *av)
 {
 	ft_putstr_fd(av, STDERR);
 	ft_putstr_fd(": ", STDERR);
@@ -20,13 +20,29 @@ static int	ft_loop_error(char *av)
 	return (EXIT_FAILURE);
 }
 
-int			ft_otool(char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
+static unsigned int	set_magic_number(
+	unsigned int magic_number, t_cmd_flag *cmd_f)
+{
+	unsigned int		tmp;
+
+	tmp = swap_uint32(magic_number);
+	if (tmp == MH_MAGIC)
+	{
+		cmd_f->is_indian = 1;
+		return (tmp);
+	}
+	cmd_f->is_indian = 0;
+	return (magic_number);
+}
+
+int					ft_otool(
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 {
 	unsigned int magic_number;
 
 	if (ptr >= ptr_end)
 		return (ft_loop_error(av));
-	magic_number = *(int *)ptr;
+	magic_number = set_magic_number(*(int *)ptr, cmd_f);
 	if (magic_number == MH_MAGIC)
 		if (cmd_f->is_otool)
 			return (handle_text(ptr, ptr_end, av));

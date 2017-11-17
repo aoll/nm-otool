@@ -37,11 +37,19 @@ static int	execute_is_otool(char *av, t_cmd_flag *cmd_f)
 	return (ret);
 }
 
+static void	print_chariot(char *s)
+{
+	ft_putchar('\n');
+	ft_putstr(s);
+	ft_putstr(":\n");
+}
+
 int			main(int ac, char **av)
 {
 	int			ret;
 	int			i;
 	t_cmd_flag	cmd_f;
+	int			check;
 
 	if (ac < 2)
 		return (EXIT_FAILURE);
@@ -51,8 +59,11 @@ int			main(int ac, char **av)
 			return (EXIT_SUCCESS);
 		return (EXIT_FAILURE);
 	}
+	check = ac - i;
 	while (i < ac)
 	{
+		if (check > 1)
+			print_chariot(av[i]);
 		ret = execute_is_otool(av[i], &cmd_f);
 		i++;
 	}

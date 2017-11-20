@@ -31,7 +31,8 @@ static char	*ft_cputype_name(int cputype)
 	return (UNKNOW);
 }
 
-static int	ft_print_arch_name(char *file_name, void *ptr, void *ptr_end)
+static int	ft_print_arch_name(
+	char *file_name, void *ptr, void *ptr_end, int is_otool)
 {
 	int		is_indian;
 	int		cputype;
@@ -41,14 +42,17 @@ static int	ft_print_arch_name(char *file_name, void *ptr, void *ptr_end)
 	is_indian = swap_uint32(*(int *)ptr) == MH_MAGIC ? 1 : 0;
 	cputype = swap_uint32_check(
 		*(int *)(ptr + sizeof(unsigned int)), is_indian);
-	ft_putstr("\n");
+	if (!is_otool)
+		ft_putstr("\n");
 	ft_putstr(file_name);
 	ft_putstr(" (");
-	ft_putstr(FOR_ARCH);
+	if (!is_otool)
+		ft_putstr(FOR_ARCH);
+	else
+		ft_putstr("architecture");
 	ft_putstr(" ");
 	ft_putstr(ft_cputype_name(cputype));
 	ft_putstr("):\n");
-	// printf("\n%s (%s %s):\n", file_name, FOR_ARCH, ft_cputype_name(cputype));
 	return (EXIT_SUCCESS);
 }
 
@@ -64,16 +68,9 @@ static int	ft_fat_file_all(
 	while (f_i.nb_arch)
 	{
 		f_i.offset = swap_uint32(f_i.f_a->offset);
-		// if (!check_valid_file(ptr + f_i.offset, ptr_end) && f_i.offset >= 0)
-		// {
-			if (!cmd_f->is_otool)
-			{
-				if (ft_print_arch_name(av, ptr + f_i.offset, ptr_end))
-					return (EXIT_FAILURE);
-			}
-			ft_otool(ptr + f_i.offset, ptr_end, av, cmd_f);
-			// return (EXIT_SUCCESS);
-		// }
+		if (ft_print_arch_name(av, ptr + f_i.offset, ptr_end, cmd_f->is_otool))
+			return (EXIT_FAILURE);
+		ft_otool(ptr + f_i.offset, ptr_end, NULL, cmd_f);
 		f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a);
 		f_i.nb_arch--;
 	}

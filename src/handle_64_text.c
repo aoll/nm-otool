@@ -31,7 +31,7 @@ int	handle_64_text(char *ptr, char *ptr_end, char *av)
 		return (EXIT_FAILURE);
 	write(1, av, ft_strlen(av));
 	write(1, ":\n", 2);
-	print_text_text_section(
-		(void*)ptr + section->offset, section->addr, section->size, 1);
+	// print_text_text_section(
+		// (void*)ptr + section->offset, section->addr, section->size, 1);
 	return (EXIT_SUCCESS);
 }

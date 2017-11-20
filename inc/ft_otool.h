@@ -80,6 +80,14 @@ typedef struct s_load
 	int						is_indian;
 } t_load;
 
+typedef struct s_ptr
+{
+	char					*ptr;
+	char					*ptr_end;
+	int						is_indian;
+	int						is_64;
+} t_ptr;
+
 uint32_t					swap_uint32_check(uint32_t val, int is_indian);
 int							set_cmd_flag(
 	int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
@@ -121,23 +129,24 @@ void						ft_get_adress_str(
 void						ft_print_padding_adresse(
 	long int addr, size_t len_padding, char *padding);
 int							print_text_text_section(
-	void *ptr, long double addr, int size, int is64);
+	void *ptr, long double addr, int size, t_ptr *ptr_infos);
 struct section_64			*ft_find_section_64(
 	struct segment_command_64 *segment, char *section_name);
 struct section				*ft_find_section(
-	struct segment_command *segment, char *section_name);
+	struct segment_command *segment, char *section_name, t_ptr *ptr_infos);
 int							ft_check_load(
 	struct load_command *lc, char *ptr_end, t_load *load);
 struct segment_command_64	*ft_find_segment_64(
 	struct load_command *lc, int ncmds, char *segment_name);
 struct segment_command		*ft_find_segment(
-	struct load_command *lc, int ncmds, char *segment_name);
+	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos);
 struct section_64			*ft_find_segment_section_64(char *ptr,
 	struct mach_header_64 *header, char *segment_name, char *section_name);
-struct section				*ft_find_segment_section(char *ptr,
-	struct mach_header *header, char *segment_name, char *section_name);
+struct section				*ft_find_segment_section(t_ptr *ptr_infos,
+	int is_indian, char *segment_name, char *section_name);
 int							handle_64_text(char *ptr, char *ptr_end, char *av);
-int							handle_text(char *ptr, char *ptr_end, char *av);
+int							handle_text(
+	char *ptr, char *ptr_end, char *av, int is_indian);
 char						*ft_format_archive_name(
 	char *n1, char *n2, char *n3, char *n4);
 void						ft_print_archive_name(char *s1, char *s2);

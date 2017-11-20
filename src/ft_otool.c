@@ -45,7 +45,7 @@ int					ft_otool(
 	magic_number = set_magic_number(*(int *)ptr, cmd_f);
 	if (magic_number == MH_MAGIC)
 		if (cmd_f->is_otool)
-			return (handle_text(ptr, ptr_end, av));
+			return (handle_text(ptr, ptr_end, av, cmd_f->is_indian));
 		else
 			return (handle(ptr, ptr_end, cmd_f));
 	else if (magic_number == MH_MAGIC_64)
@@ -55,7 +55,7 @@ int					ft_otool(
 			return (handle_64(ptr, ptr_end, cmd_f));
 	else if (magic_number == FAT_CIGAM)
 		return (ft_fat_file(ptr, ptr_end, av, cmd_f));
-	else if (!strncmp(ptr, ARMAG, SARMAG))
+	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 		return (ft_ar_file(ptr, ptr_end, av, cmd_f));
 	return (ft_loop_error(av));
 }

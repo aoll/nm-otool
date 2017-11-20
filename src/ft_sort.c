@@ -19,7 +19,8 @@ static void	set_index(
 	*index = i;
 }
 
-static int	loop_sort(struct nlist **list, int nsyms, char *stringtable)
+static int	loop_sort(
+	struct nlist **list, int nsyms, char *s, int is_indian)
 {
 	struct nlist		*tmp;
 	int					i;
@@ -35,8 +36,8 @@ static int	loop_sort(struct nlist **list, int nsyms, char *stringtable)
 			set_index(&tmp, &index, i, list);
 		if (list[i])
 		{
-			cmp = ft_strcmp(stringtable + tmp->n_un.n_strx,
-				stringtable + list[i]->n_un.n_strx);
+			cmp = ft_strcmp(s + swap_uint32_check(tmp->n_un.n_strx, is_indian),
+				s + swap_uint32_check(list[i]->n_un.n_strx, is_indian));
 			if (cmp > 0)
 				set_index(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value > list[i]->n_value)
@@ -46,7 +47,8 @@ static int	loop_sort(struct nlist **list, int nsyms, char *stringtable)
 	return (index);
 }
 
-static int	loop_sort_reverse(struct nlist **list, int nsyms, char *s)
+static int	loop_sort_reverse(
+	struct nlist **list, int nsyms, char *s, int is_indian)
 {
 	struct nlist		*tmp;
 	int					i;
@@ -62,8 +64,8 @@ static int	loop_sort_reverse(struct nlist **list, int nsyms, char *s)
 			set_index(&tmp, &index, i, list);
 		if (list[i])
 		{
-			cmp = ft_strcmp(s + tmp->n_un.n_strx,
-				s + list[i]->n_un.n_strx);
+			cmp = ft_strcmp(s + swap_uint32_check(tmp->n_un.n_strx, is_indian),
+				s + swap_uint32_check(list[i]->n_un.n_strx, is_indian));
 			if (cmp < 0)
 				set_index(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value < list[i]->n_value)
@@ -81,6 +83,7 @@ int			ft_sort(
 	int					j;
 	int					index;
 
+	printf("%s\n", "SORT");
 	if (!(list = ft_copy_nlist(array, nsyms)))
 		return (EXIT_FAILURE);
 	j = -1;
@@ -89,9 +92,11 @@ int			ft_sort(
 		if (seg_infos->cmd_f->p)
 			index = j;
 		else if (seg_infos->cmd_f->r)
-			index = loop_sort_reverse(list, nsyms, stringtable);
+			index = loop_sort_reverse(
+				list, nsyms, stringtable, seg_infos->cmd_f->is_indian);
 		else
-			index = loop_sort(list, nsyms, stringtable);
+			index = loop_sort(
+				list, nsyms, stringtable, seg_infos->cmd_f->is_indian);
 		print_outpout(list[index], stringtable, seg_infos, seg_infos->cmd_f);
 		free(list[index]);
 		list[index] = NULL;

@@ -74,6 +74,6 @@ int			print_outpout(
 	if ((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
 	print_outpout_format(
-		nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);
+		nlist, type, stringtable + swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);
 	return (EXIT_SUCCESS);
 }

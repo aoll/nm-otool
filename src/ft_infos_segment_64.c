@@ -48,8 +48,8 @@ t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end,
 	ft_init_seg_infos(seg_infos);
 	if ((void *)(lc = (void *)ptr + sizeof(*header)) > (void *)ptr_end)
 		return (NULL);
-	if (ft_check_load(lc, header->ncmds, header->sizeofcmds))
-		return (NULL);
+	// if (ft_check_load(lc, header->ncmds, header->sizeofcmds))
+	// 	return (NULL);
 	i = 0;
 	index = 0;
 	while (i < header->ncmds)

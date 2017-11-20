@@ -12,25 +12,29 @@
 
 #include "ft_otool.h"
 
-int	ft_check_load(struct load_command *lc, int ncmds, int sizeofcmds)
+int	ft_check_load(
+	struct load_command *lc, char *ptr_end, t_load *load)
 {
 	int							i;
 	int							size;
 
 	i = 0;
 	size = 0;
-	while (i < ncmds)
+	while (i < load->ncmds)
 	{
-		if (lc->cmdsize < MIN_LOAD_SIZE)
+		if (swap_uint32_check(lc->cmdsize, load->is_indian) < MIN_LOAD_SIZE)
 		{
 			ft_putstr_fd(ERROR_LOAD_MIN_SIZE, STDERR);
 			return (EXIT_FAILURE);
 		}
-		size += lc->cmdsize;
+		size += swap_uint32_check(lc->cmdsize, load->is_indian);
 		i++;
-		lc = (void *)lc + lc->cmdsize;
+		if ((void *)(lc = (void *)lc
+		+ swap_uint32_check(lc->cmdsize, load->is_indian))
+		+ sizeof(struct load_command) > (void *)ptr_end)
+			return (EXIT_FAILURE);
 	}
-	if (size != sizeofcmds)
+	if (size != load->sizeofcmds)
 	{
 		ft_putstr_fd(ERROR_LOAD_SIZE, STDERR);
 		return (EXIT_FAILURE);

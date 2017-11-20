@@ -73,6 +73,14 @@ struct						s_fat_infos
 	char					*s;
 };
 
+typedef struct s_load
+{
+	int						ncmds;
+	int						sizeofcmds;
+	int						is_indian;
+} t_load;
+
+uint32_t					swap_uint32_check(uint32_t val, int is_indian);
 int							set_cmd_flag(
 	int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
 int							print_outpout_format(
@@ -119,7 +127,7 @@ struct section_64			*ft_find_section_64(
 struct section				*ft_find_section(
 	struct segment_command *segment, char *section_name);
 int							ft_check_load(
-	struct load_command *lc, int ncmds, int sizeofcmds);
+	struct load_command *lc, char *ptr_end, t_load *load);
 struct segment_command_64	*ft_find_segment_64(
 	struct load_command *lc, int ncmds, char *segment_name);
 struct segment_command		*ft_find_segment(

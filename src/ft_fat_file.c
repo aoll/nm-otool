@@ -24,15 +24,16 @@ static int	ft_fat_file_all(
 	while (f_i.nb_arch)
 	{
 		f_i.offset = swap_uint32(f_i.f_a->offset);
-		if (!check_valid_file(ptr + f_i.offset, ptr_end) && f_i.offset >= 0)
-		{
+		// if (!check_valid_file(ptr + f_i.offset, ptr_end) && f_i.offset >= 0)
+		// {
 			if (!cmd_f->is_otool)
 			{
 				ft_putstr(av);
 				ft_putstr(":\n");
 			}
 			ft_otool(ptr + f_i.offset, ptr_end, av, cmd_f);
-		}
+			return (EXIT_SUCCESS);
+		// }
 		f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a);
 		f_i.nb_arch--;
 	}

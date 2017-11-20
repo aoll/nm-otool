@@ -83,7 +83,9 @@ int			ft_sort(
 	int					j;
 	int					index;
 
+
 	printf("%s\n", "SORT");
+	printf("SEG INFOS\n text_nsect: %d, data_nsect: %d, bss_nsect: %d\n",seg_infos->text_nsect, seg_infos->data_nsect, seg_infos->bss_nsect);
 	if (!(list = ft_copy_nlist(array, nsyms)))
 		return (EXIT_FAILURE);
 	j = -1;

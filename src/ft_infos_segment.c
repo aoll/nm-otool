@@ -22,8 +22,10 @@ static void	loop_segment(
 	segment = (struct segment_command *)lc;
 	section = (void *)segment + sizeof(*segment);
 	loop = 0;
+	printf("%s\n", "LOOP SEGMENT");
 	while (loop < swap_uint32_check(segment->nsects, is_indian))
 	{
+		printf("section->sectname : %s\n", section->sectname);
 		if (ft_strcmp(section->sectname, SECT_TEXT) == 0)
 			seg_infos->text_nsect = *index + 1;
 		else if (ft_strcmp(section->sectname, SECT_DATA) == 0)
@@ -59,7 +61,7 @@ t_seg_infos	*ft_infos_segment(char *ptr, char *ptr_end,
 	index = 0;
 	while (i < swap_uint32_check(header->ncmds, load.is_indian))
 	{
-		if (lc->cmd == LC_SEGMENT)
+		if (swap_uint32_check(lc->cmd, load.is_indian) == LC_SEGMENT)
 			loop_segment(lc, &index, seg_infos, load.is_indian);
 		if ((void *)(lc = (void *)lc
 		+ swap_uint32_check(lc->cmdsize, load.is_indian))

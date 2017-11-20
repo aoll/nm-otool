@@ -20,7 +20,8 @@ int	print_outpout_format(
 		if (nlist->n_value || type != 'U')
 		{
 			ft_print_padding_adresse(
-				nlist->n_value, ft_strlen(PADDING_STR), PADDING_STR);
+				swap_uint32_check(nlist->n_value, cmd_flag->is_indian),
+				ft_strlen(PADDING_STR), PADDING_STR);
 		}
 		else
 		{

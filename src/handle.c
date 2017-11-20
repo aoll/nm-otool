@@ -20,7 +20,6 @@ static int	loop_handle(char *ptr, char *ptr_end,
 	struct symtab_command	*sym;
 	struct load_command		*lc;
 
-	printf("%s\n", "LOOP HANDLE");
 	if ((void *)(lc = (void *)ptr + sizeof(*header))
 	+ sizeof(struct load_command) > (void *)ptr_end)
 		return (EXIT_FAILURE);
@@ -30,7 +29,6 @@ static int	loop_handle(char *ptr, char *ptr_end,
 	seg_infos->cmd_f = cmd_f;
 	while (++i < swap_uint32_check(header->ncmds, cmd_f->is_indian))
 	{
-		printf("I : %d\n", i);
 		if (swap_uint32_check(lc->cmd, cmd_f->is_indian) == LC_SYMTAB)
 		{
 			sym = (struct symtab_command *)lc;
@@ -53,7 +51,6 @@ int			handle(char *ptr, char *ptr_end, t_cmd_flag *cmd_f)
 {
 	struct mach_header	*header;
 
-	printf("%s\n", "HANDLE");
 	if ((void *)(header = (struct mach_header *)ptr)
 	+ sizeof(struct mach_header) > (void *)ptr_end)
 		return (EXIT_FAILURE);

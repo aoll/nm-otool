@@ -12,6 +12,46 @@
 
 #include "ft_otool.h"
 
+static char	*ft_cputype_name(int cputype)
+{
+	if (cputype == CPU_TYPE_POWERPC)
+		return ("ppc");
+	else if (cputype == CPU_TYPE_I386)
+		return ("i386");
+	else if (cputype == CPU_TYPE_VAX)
+		return ("vax");
+	else if (cputype == CPU_TYPE_MC680x0)
+		return ("mc680x0");
+	else if (cputype == CPU_TYPE_MC98000)
+		return ("mc98000");
+	else if (cputype == CPU_TYPE_SPARC)
+		return ("sparc");
+	else if (cputype == CPU_TYPE_I860)
+		return ("i860");
+	return (UNKNOW);
+}
+
+static int	ft_print_arch_name(char *file_name, void *ptr, void *ptr_end)
+{
+	int		is_indian;
+	int		cputype;
+
+	if (ptr + sizeof(unsigned int) > ptr_end)
+		return (EXIT_FAILURE);
+	is_indian = swap_uint32(*(int *)ptr) == MH_MAGIC ? 1 : 0;
+	cputype = swap_uint32_check(
+		*(int *)(ptr + sizeof(unsigned int)), is_indian);
+	ft_putstr("\n");
+	ft_putstr(file_name);
+	ft_putstr(" (");
+	ft_putstr(FOR_ARCH);
+	ft_putstr(" ");
+	ft_putstr(ft_cputype_name(cputype));
+	ft_putstr("):\n");
+	// printf("\n%s (%s %s):\n", file_name, FOR_ARCH, ft_cputype_name(cputype));
+	return (EXIT_SUCCESS);
+}
+
 static int	ft_fat_file_all(
 	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 {
@@ -28,11 +68,11 @@ static int	ft_fat_file_all(
 		// {
 			if (!cmd_f->is_otool)
 			{
-				ft_putstr(av);
-				ft_putstr(":\n");
+				if (ft_print_arch_name(av, ptr + f_i.offset, ptr_end))
+					return (EXIT_FAILURE);
 			}
 			ft_otool(ptr + f_i.offset, ptr_end, av, cmd_f);
-			return (EXIT_SUCCESS);
+			// return (EXIT_SUCCESS);
 		// }
 		f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a);
 		f_i.nb_arch--;

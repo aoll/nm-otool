@@ -19,7 +19,6 @@ int	sort_and_print_outpout(
 	char				*stringtable;
 	struct nlist		*array;
 
-	printf("%s\n", "SORT AND PRINT OUTPUT");
 	if ((void *)(array = ptr
 		+ swap_uint32_check(sym->symoff, seg_infos->cmd_f->is_indian))
 		+ sizeof(struct nlist) > ptr_end)

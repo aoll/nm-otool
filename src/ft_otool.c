@@ -28,7 +28,6 @@ static unsigned int	set_magic_number(
 	tmp = swap_uint32(magic_number);
 	if (tmp == MH_MAGIC)
 	{
-		printf("%s\n", "ENDIAN");
 		cmd_f->is_indian = 1;
 		return (tmp);
 	}

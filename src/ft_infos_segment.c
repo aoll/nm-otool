@@ -22,10 +22,8 @@ static void	loop_segment(
 	segment = (struct segment_command *)lc;
 	section = (void *)segment + sizeof(*segment);
 	loop = 0;
-	printf("%s\n", "LOOP SEGMENT");
 	while (loop < swap_uint32_check(segment->nsects, is_indian))
 	{
-		printf("section->sectname : %s\n", section->sectname);
 		if (ft_strcmp(section->sectname, SECT_TEXT) == 0)
 			seg_infos->text_nsect = *index + 1;
 		else if (ft_strcmp(section->sectname, SECT_DATA) == 0)

@@ -26,7 +26,7 @@ static unsigned int	set_magic_number(
 	unsigned int		tmp;
 
 	tmp = swap_uint32(magic_number);
-	if (tmp == MH_MAGIC)
+	if (tmp == MH_MAGIC || tmp == MH_MAGIC_64)
 	{
 		cmd_f->is_indian = 1;
 		return (tmp);
@@ -50,7 +50,7 @@ int					ft_otool(
 			return (handle(ptr, ptr_end, cmd_f));
 	else if (magic_number == MH_MAGIC_64)
 		if (cmd_f->is_otool)
-			return (handle_64_text(ptr, ptr_end, av));
+			return (handle_64_text(ptr, ptr_end, av, cmd_f->is_indian));
 		else
 			return (handle_64(ptr, ptr_end, cmd_f));
 	else if (magic_number == FAT_CIGAM)

@@ -26,7 +26,7 @@ struct segment_command	*ft_find_segment(
 	{
 		if (swap_uint32_check(lc->cmd, ptr_infos->is_indian) == LC_SEGMENT)
 		{
-			if ((void *)(seg = (struct segment_command*)lc)
+			if ((void *)(seg = (struct segment_command *)lc)
 			+ sizeof(struct segment_command) > (void *)ptr_infos->ptr_end)
 				return (NULL);
 			if (ft_strcmp(seg->segname, segment_name) == 0 || ncmds == 1)

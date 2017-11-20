@@ -131,20 +131,21 @@ void						ft_print_padding_adresse(
 int							print_text_text_section(
 	void *ptr, long double addr, int size, t_ptr *ptr_infos);
 struct section_64			*ft_find_section_64(
-	struct segment_command_64 *segment, char *section_name);
+	struct segment_command_64 *segment, char *section_name, t_ptr *ptr_infos);
 struct section				*ft_find_section(
 	struct segment_command *segment, char *section_name, t_ptr *ptr_infos);
 int							ft_check_load(
 	struct load_command *lc, char *ptr_end, t_load *load);
 struct segment_command_64	*ft_find_segment_64(
-	struct load_command *lc, int ncmds, char *segment_name);
+	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos);
 struct segment_command		*ft_find_segment(
 	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos);
-struct section_64			*ft_find_segment_section_64(char *ptr,
-	struct mach_header_64 *header, char *segment_name, char *section_name);
+struct section_64			*ft_find_segment_section_64(t_ptr *ptr_infos,
+	int is_indian, char *segment_name, char *section_name);
 struct section				*ft_find_segment_section(t_ptr *ptr_infos,
 	int is_indian, char *segment_name, char *section_name);
-int							handle_64_text(char *ptr, char *ptr_end, char *av);
+int							handle_64_text(
+	char *ptr, char *ptr_end, char *av, int is_indian);
 int							handle_text(
 	char *ptr, char *ptr_end, char *av, int is_indian);
 char						*ft_format_archive_name(

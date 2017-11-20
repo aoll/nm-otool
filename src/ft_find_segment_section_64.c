@@ -12,19 +12,25 @@
 
 #include "ft_otool.h"
 
-struct section_64	*ft_find_segment_section_64(char *ptr,
-	struct mach_header_64 *header, char *segment_name, char *section_name)
+struct section_64	*ft_find_segment_section_64(t_ptr *ptr_infos,
+	int is_indian, char *segment_name, char *section_name)
 {
+	struct mach_header_64		*header;
 	struct load_command			*lc;
 	struct segment_command_64	*seg;
 	struct section_64			*section;
 
-	lc = (void *)ptr + sizeof(*header);
-	// if (ft_check_load(lc, header->ncmds, header->sizeofcmds))
-	// 	return (NULL);
-	if (!(seg = ft_find_segment_64(lc, header->ncmds, segment_name)))
+	if ((void *)(header = (struct mach_header_64 *)ptr_infos->ptr)
+	+ sizeof(struct mach_header) > (void *)ptr_infos->ptr_end)
 		return (NULL);
-	if (!(section = ft_find_section_64(seg, section_name)))
+	if ((void *)(lc = (void *)ptr_infos->ptr + sizeof(*header))
+	+ sizeof(struct load_command) > (void *)ptr_infos->ptr_end)
+		return (NULL);
+	ptr_infos->is_indian = is_indian;
+	if (!(seg = ft_find_segment_64(lc,
+		swap_uint32_check(header->ncmds, is_indian), segment_name, ptr_infos)))
+		return (NULL);
+	if (!(section = ft_find_section_64(seg, section_name, ptr_infos)))
 		return (NULL);
 	return (section);
 }

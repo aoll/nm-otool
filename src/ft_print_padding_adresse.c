@@ -13,10 +13,11 @@
 #include "ft_otool.h"
 
 void	ft_print_padding_adresse(
-	long int addr, size_t len_padding, char *padding)
+	long long unsigned addr, size_t len_padding, char *padding)
 {
 	char	*addr_str;
 
+	// printf("addr %llu\n", addr);
 	addr_str = ft_strdup(padding);
 	if (addr > 0)
 		ft_get_adress_str(addr, &addr_str, len_padding - 1);

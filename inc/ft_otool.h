@@ -134,7 +134,7 @@ void						ft_print_adress(long double adr);
 void						ft_get_adress_str(
 	long double adr, char **dest, int index);
 void						ft_print_padding_adresse(
-	long int addr, size_t len_padding, char *padding);
+	long long unsigned addr, size_t len_padding, char *padding);
 int							print_text_text_section(
 	void *ptr, long double addr, int size, t_ptr *ptr_infos);
 struct section_64			*ft_find_section_64(

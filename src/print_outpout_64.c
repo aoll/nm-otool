@@ -33,7 +33,13 @@ static void	case_n_undef(struct nlist_64 *nlist, char *type)
 {
 	*type = 'u';
 	if (nlist->n_value != 0)
-		*type = 'c';
+	{
+		if ((nlist->n_type & N_EXT))
+			*type = 'c';
+		else
+			*type = '?';
+	}
+
 }
 
 static int	set_type(struct nlist_64 *nlist, t_seg_infos *seg_infos)
@@ -72,16 +78,16 @@ int			print_outpout_64(
 	if (cmd_f->g && !(nlist->n_type & N_EXT))
 		return (EXIT_SUCCESS);
 	if ((nlist->n_type & N_EXT) && type != '?')
-		type = ft_toupper(type);
-	else
-		type = '?';
-
+			type = ft_toupper(type);
 	if ((int)nlist->n_un.n_strx > -1)
 		print_outpout_format_64(
-			nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);
+			nlist, type, stringtable
+			+ swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);
 	else
 	{
 		if (type == 'U')
+			type = '?';
+		if (type >= 'a' && type <= 'z')
 			type = '?';
 		print_outpout_format_64(
 			nlist, type, BAD_STRING_INDEX, cmd_f);

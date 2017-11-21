@@ -38,7 +38,7 @@
 # define IS_OTOOL			1
 # define IS_NM				0
 
-# define BAD_STRING_INDEX	"bad index adresse"
+# define BAD_STRING_INDEX	"bad string index"
 
 typedef struct s_cmd_flag	t_cmd_flag;
 

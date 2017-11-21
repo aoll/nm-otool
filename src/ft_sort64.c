@@ -45,18 +45,20 @@ static int		loop_sort64(
 			set_index64(&tmp, &index, i, list);
 		if (list[i])
 		{
-			if ((void *)(stringtable + tmp->n_un.n_strx) > ptr_end)
+			
+			// write(1, "ok\n", 3);
+			// printf("l: %lx32\n", (size_t)(stringtable + list[i]->n_un.n_strx) + (size_t)ptr_end);
+			// if ((void *)(stringtable + tmp->n_un.n_strx) > ptr_end)
+			// {
+			// 	tmp->n_value = (size_t)(stringtable + tmp->n_un.n_strx);
+			// 	tmp->n_un.n_strx = -1;
+			// }
+			if ((void *)(stringtable + list[i]->n_un.n_strx) >= ptr_end)
 			{
-				tmp->n_value = (size_t)(stringtable + tmp->n_un.n_strx);
-				printf("tp: %llu\n", tmp->n_value);
-				tmp->n_un.n_strx = -1;
-			}
-			if ((void *)(stringtable + list[i]->n_un.n_strx) > ptr_end)
-			{
-				list[i]->n_value = (size_t)(stringtable + list[i]->n_un.n_strx);
-				printf("li: %llu\n", list[i]->n_value);
+				// list[i]->n_value = (size_t)stringtable;
 				list[i]->n_un.n_strx = -1;
 			}
+			return (i);
 			cmp = ft_strcmp(is_bad_adresse(stringtable, tmp->n_un.n_strx),
 				is_bad_adresse(stringtable, list[i]->n_un.n_strx));
 			if (cmp > 0)
@@ -88,11 +90,13 @@ static int	loop_sort64_reverse(
 		{
 			if ((void *)(s + tmp->n_un.n_strx) > ptr_end)
 			{
+				tmp->n_value = (size_t)(s + tmp->n_un.n_strx);
 				list[i]->n_un.n_strx = -1;
 				return (i);
 			}
 			if ((void *)(s + list[i]->n_un.n_strx) > ptr_end)
 			{
+				list[i]->n_value = (size_t)(s + list[i]->n_un.n_strx);
 				list[i]->n_un.n_strx = -1;
 				return (i);
 			}

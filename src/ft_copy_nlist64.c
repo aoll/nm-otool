@@ -17,7 +17,9 @@ static void			ft_set_nlist64(
 {
 	l->n_type = array[i].n_type;
 	l->n_sect = array[i].n_sect;
-	l->n_value = array[i].n_value;
+	l->n_value = (unsigned long)array[i].n_value <= 0 ? array[i].n_value  : 42;
+	// l->n_value = array[i].n_value > 0x1000000000000000 ? array[i].n_value  : (size_t)array[i].n_un.n_strx;
+	// l->n_value = 42;
 	l->n_un.n_strx = array[i].n_un.n_strx;
 }
 

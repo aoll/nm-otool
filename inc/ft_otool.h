@@ -38,6 +38,8 @@
 # define IS_OTOOL			1
 # define IS_NM				0
 
+# define BAD_STRING_INDEX	"bad index adresse"
+
 typedef struct s_cmd_flag	t_cmd_flag;
 
 struct						s_cmd_flag
@@ -60,6 +62,8 @@ struct						s_seg_infos
 	int						text_nsect;
 	int						data_nsect;
 	int						bss_nsect;
+	void					*ptr;
+	void					*ptr_end;
 };
 
 typedef struct s_fat_infos	t_fat_infos;
@@ -78,6 +82,9 @@ typedef struct s_load
 	int						ncmds;
 	int						sizeofcmds;
 	int						is_indian;
+	void					*ptr;
+	void					*ptr_end;
+
 } t_load;
 
 typedef struct s_ptr

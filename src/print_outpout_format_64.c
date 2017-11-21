@@ -30,7 +30,8 @@ int	print_outpout_format_64(
 		write(STDOUT, &type, 1);
 		write(STDOUT, " ", 1);
 	}
-	write(STDOUT, name, ft_strlen(name));
+	if (name)
+		write(STDOUT, name, ft_strlen(name));
 	write(STDOUT, "\n", 1);
 	return (EXIT_SUCCESS);
 }

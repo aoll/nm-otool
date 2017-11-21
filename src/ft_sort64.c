@@ -19,7 +19,17 @@ static void	set_index64(
 	*index = i;
 }
 
-static int	loop_sort64(struct nlist_64 **list, int nsyms, char *stringtable)
+static char		*is_bad_adresse(char *s, int offset)
+{
+	if (offset < 0)
+	{
+		return (BAD_STRING_INDEX);
+	}
+	return (s + offset);
+}
+
+static int		loop_sort64(
+	struct nlist_64 **list, int nsyms, char *stringtable, void *ptr_end)
 {
 	struct nlist_64		*tmp;
 	int					i;
@@ -35,8 +45,20 @@ static int	loop_sort64(struct nlist_64 **list, int nsyms, char *stringtable)
 			set_index64(&tmp, &index, i, list);
 		if (list[i])
 		{
-			cmp = ft_strcmp(stringtable + tmp->n_un.n_strx,
-				stringtable + list[i]->n_un.n_strx);
+			if ((void *)(stringtable + tmp->n_un.n_strx) > ptr_end)
+			{
+				tmp->n_value = (size_t)(stringtable + tmp->n_un.n_strx);
+				printf("tp: %llu\n", tmp->n_value);
+				tmp->n_un.n_strx = -1;
+			}
+			if ((void *)(stringtable + list[i]->n_un.n_strx) > ptr_end)
+			{
+				list[i]->n_value = (size_t)(stringtable + list[i]->n_un.n_strx);
+				printf("li: %llu\n", list[i]->n_value);
+				list[i]->n_un.n_strx = -1;
+			}
+			cmp = ft_strcmp(is_bad_adresse(stringtable, tmp->n_un.n_strx),
+				is_bad_adresse(stringtable, list[i]->n_un.n_strx));
 			if (cmp > 0)
 				set_index64(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value > list[i]->n_value)
@@ -46,7 +68,8 @@ static int	loop_sort64(struct nlist_64 **list, int nsyms, char *stringtable)
 	return (index);
 }
 
-static int	loop_sort64_reverse(struct nlist_64 **list, int nsyms, char *s)
+static int	loop_sort64_reverse(
+	struct nlist_64 **list, int nsyms, char *s, void *ptr_end)
 {
 	struct nlist_64		*tmp;
 	int					i;
@@ -58,10 +81,21 @@ static int	loop_sort64_reverse(struct nlist_64 **list, int nsyms, char *s)
 	i = -1;
 	while (++i < nsyms)
 	{
+		cmp = 1;
 		if (!tmp && list[i])
 			set_index64(&tmp, &index, i, list);
 		if (list[i])
 		{
+			if ((void *)(s + tmp->n_un.n_strx) > ptr_end)
+			{
+				list[i]->n_un.n_strx = -1;
+				return (i);
+			}
+			if ((void *)(s + list[i]->n_un.n_strx) > ptr_end)
+			{
+				list[i]->n_un.n_strx = -1;
+				return (i);
+			}
 			cmp = ft_strcmp(s + tmp->n_un.n_strx,
 				s + list[i]->n_un.n_strx);
 			if (cmp < 0)
@@ -89,9 +123,10 @@ int			ft_sort64(
 		if (seg_infos->cmd_f->p)
 			index = j;
 		else if (seg_infos->cmd_f->r)
-			index = loop_sort64_reverse(list, nsyms, stringtable);
+			index = loop_sort64_reverse(
+				list, nsyms, stringtable, seg_infos->ptr_end);
 		else
-			index = loop_sort64(list, nsyms, stringtable);
+			index = loop_sort64(list, nsyms, stringtable, seg_infos->ptr_end);
 		print_outpout_64(list[index], stringtable, seg_infos, seg_infos->cmd_f);
 		free(list[index]);
 		list[index] = NULL;

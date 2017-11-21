@@ -73,7 +73,16 @@ int			print_outpout_64(
 		return (EXIT_SUCCESS);
 	if ((nlist->n_type & N_EXT) && type != '?')
 		type = ft_toupper(type);
-	print_outpout_format_64(
-		nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);
+	if ((int)nlist->n_un.n_strx > -1)
+		print_outpout_format_64(
+			nlist, type, stringtable + nlist->n_un.n_strx, cmd_f);
+	else
+	{
+		if (!(nlist->n_type & N_EXT) && type != '?')
+			type = '?';
+		print_outpout_format_64(
+			nlist, type, BAD_STRING_INDEX, cmd_f);
+	}
+
 	return (EXIT_SUCCESS);
 }

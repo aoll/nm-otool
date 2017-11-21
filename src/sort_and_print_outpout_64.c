@@ -19,9 +19,17 @@ int	sort_and_print_outpout_64(
 	char				*stringtable;
 	struct nlist_64		*array;
 
-	if ((void *)(array = ptr + sym->symoff) > ptr_end)
+	if ((void *)(array = ptr
+		+ swap_uint32_check(sym->symoff, seg_infos->cmd_f->is_indian))
+		+ sizeof(struct nlist) > ptr_end)
 		return (EXIT_FAILURE);
-	if ((void *)(stringtable = ptr + sym->stroff) > ptr_end)
+	if ((void *)(stringtable = ptr
+		+ swap_uint32_check(sym->stroff, seg_infos->cmd_f->is_indian))
+		+ 1 > ptr_end)
 		return (EXIT_FAILURE);
-	return (ft_sort64(array, sym->nsyms, stringtable, seg_infos));
+	seg_infos->ptr = ptr;
+	seg_infos->ptr_end = ptr_end;
+	return (ft_sort64(array,
+		swap_uint32_check(sym->nsyms, seg_infos->cmd_f->is_indian),
+		stringtable, seg_infos));
 }

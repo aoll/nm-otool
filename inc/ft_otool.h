@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 18:55:30 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/22 21:17:13 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,14 @@ typedef struct s_ptr
 	int						is_64;
 } t_ptr;
 
-int			loop_sort_reverse(
+int							loop_sort_reverse(
 	struct nlist **list, int nsyms, char *s, void *ptr_end);
-int			loop_sort(
+int							loop_sort(
 	struct nlist **list, int nsyms, char *stringtable, void *ptr_end);
-
-int			loop_sort64_reverse(
+int							free_seg_infos(t_seg_infos **seg_infos, int ret);
+int							loop_sort64_reverse(
 	struct nlist_64 **list, int nsyms, char *s, void *ptr_end);
-int			loop_sort64(
+int							loop_sort64(
 	struct nlist_64 **list, int nsyms, char *stringtable, void *ptr_end);
 uint32_t					swap_uint32_check(uint32_t val, int is_indian);
 int							set_cmd_flag(

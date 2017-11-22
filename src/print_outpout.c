@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:24:01 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:46:19 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/22 19:28:51 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,15 @@ static void	case_n_undef(struct nlist *nlist, char *type)
 {
 	*type = 'u';
 	if (nlist->n_value != 0)
-		*type = 'c';
+	{
+		if ((nlist->n_type & N_EXT))
+			*type = 'c';
+		else
+			*type = '?';
+	}
 }
 
-static int	set_type(
-	struct nlist *nlist, t_seg_infos *seg_infos)
+static int	set_type(struct nlist *nlist, t_seg_infos *seg_infos)
 {
 	char				type;
 	int					c;
@@ -70,14 +74,16 @@ int			print_outpout(
 		return (EXIT_SUCCESS);
 	if (cmd_f->uu && type == 'u')
 		return (EXIT_SUCCESS);
-	if (cmd_f->g
-		&& !(nlist->n_type & N_EXT))
+	if (cmd_f->g && !(nlist->n_type & N_EXT))
 		return (EXIT_SUCCESS);
-	if ((nlist->n_type & N_EXT)
-	&& type != '?')
-		type = ft_toupper(type);
-	print_outpout_format(
-		nlist, type, stringtable
-		+ swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);
+	if ((nlist->n_type & N_EXT) && type != '?')
+			type = ft_toupper(type);
+	if ((int)nlist->n_un.n_strx > -1)
+		print_outpout_format(
+			nlist, type, stringtable
+			+ swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);
+	else
+		print_outpout_format(
+			nlist, type, BAD_STRING_INDEX, cmd_f);
 	return (EXIT_SUCCESS);
 }

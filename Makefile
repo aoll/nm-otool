@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/07/25 16:54:21 by alex             ###   ########.fr        #
+#    Updated: 2017/11/22 18:54:56 by aollivie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -76,7 +76,9 @@ C_SRC =	check_valid_file.c \
 		sort_and_print_outpout.c \
 		sort_and_print_outpout_64.c \
 		swap_uint32.c \
-		set_cmd_flag.c
+		set_cmd_flag.c \
+		ft_loop_sort64.c \
+		ft_loop_sort.c
 
 VPATH= src
 

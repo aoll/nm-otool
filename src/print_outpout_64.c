@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:23:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:46:09 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/22 18:52:44 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ static void	case_n_undef(struct nlist_64 *nlist, char *type)
 		else
 			*type = '?';
 	}
-
 }
 
 static int	set_type(struct nlist_64 *nlist, t_seg_infos *seg_infos)
@@ -68,12 +67,6 @@ int			print_outpout_64(
 {
 	char				type;
 
-	// printf("n_desc: %d ,", nlist->n_desc);
-	// printf("n_sect: %d ,", nlist->n_sect);
-	// printf("n_type: %d ,", nlist->n_type);
-	// printf("n_un.n_strx: %d\n", nlist->n_un.n_strx);
-	// return (0);
-
 	if ((nlist->n_type & N_STAB) != 0)
 		return (EXIT_SUCCESS);
 	type = set_type(nlist, seg_infos);
@@ -90,14 +83,7 @@ int			print_outpout_64(
 			nlist, type, stringtable
 			+ swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);
 	else
-	{
-		// if (type == 'U')
-		// 	type = '?';
-		// if (type >= 'a' && type <= 'z')
-		// 	type = '?';
 		print_outpout_format_64(
 			nlist, type, BAD_STRING_INDEX, cmd_f);
-	}
-
 	return (EXIT_SUCCESS);
 }

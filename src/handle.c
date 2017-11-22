@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:23:09 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:36:07 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/22 20:04:41 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,17 @@ static int	loop_handle(char *ptr, char *ptr_end,
 	{
 		if (swap_uint32_check(lc->cmd, cmd_f->is_indian) == LC_SYMTAB)
 		{
-			sym = (struct symtab_command *)lc;
-			sort_and_print_outpout(sym, ptr, ptr_end, seg_infos);
+			if ((void *)(sym = (struct symtab_command *)lc) + sizeof(*sym)
+			> (void *)ptr_end)
+			{
+				free(seg_infos);
+				return (EXIT_FAILURE);
+			}
+			if (sort_and_print_outpout(sym, ptr, ptr_end, seg_infos))
+			{
+				free(seg_infos);
+				return (EXIT_FAILURE);
+			}
 			break ;
 		}
 		if ((void *)(lc = (void *)lc

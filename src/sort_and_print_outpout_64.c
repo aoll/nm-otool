@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:24:26 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:24:28 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/22 19:32:43 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	sort_and_print_outpout_64(
 
 	if ((void *)(array = ptr
 		+ swap_uint32_check(sym->symoff, seg_infos->cmd_f->is_indian))
-		+ sizeof(struct nlist) > ptr_end)
+		+ sizeof(struct nlist_64) > ptr_end)
 		return (EXIT_FAILURE);
 	if ((void *)(stringtable = ptr
 		+ swap_uint32_check(sym->stroff, seg_infos->cmd_f->is_indian))

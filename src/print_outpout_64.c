@@ -68,6 +68,12 @@ int			print_outpout_64(
 {
 	char				type;
 
+	// printf("n_desc: %d ,", nlist->n_desc);
+	// printf("n_sect: %d ,", nlist->n_sect);
+	// printf("n_type: %d ,", nlist->n_type);
+	// printf("n_un.n_strx: %d\n", nlist->n_un.n_strx);
+	// return (0);
+
 	if ((nlist->n_type & N_STAB) != 0)
 		return (EXIT_SUCCESS);
 	type = set_type(nlist, seg_infos);

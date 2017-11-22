@@ -53,16 +53,17 @@ t_seg_infos	*ft_infos_segment_64(char *ptr, char *ptr_end,
 
 	if (!(seg_infos = malloc(sizeof(t_seg_infos))))
 		return (NULL);
-	load.is_indian = swap_uint32(*(int *)ptr) == MH_MAGIC ? 1 : 0;
+	load.is_indian = swap_uint32(*(int *)ptr) == MH_MAGIC_64 ? 1 : 0;
 	load.ncmds = swap_uint32_check(header->ncmds, load.is_indian);
 	load.sizeofcmds = swap_uint32_check(header->sizeofcmds, load.is_indian);
 	load.ptr = ptr;
 	load.ptr_end = ptr_end;
 	ft_init_seg_infos(seg_infos);
-	if ((void *)(lc = (void *)ptr + sizeof(*header)) > (void *)ptr_end)
+	if ((void *)(lc = (void *)ptr + sizeof(*header))
+	+ sizeof(*lc) > (void *)ptr_end)
 		return (NULL);
-	// if (ft_check_load(lc, header->ncmds, header->sizeofcmds))
-	// 	return (NULL);
+	if (ft_check_load(lc, ptr_end, &load))
+		return (NULL);
 	i = 0;
 	index = 0;
 	while (i < header->ncmds)

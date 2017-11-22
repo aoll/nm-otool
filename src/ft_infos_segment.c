@@ -64,11 +64,6 @@ t_seg_infos	*ft_infos_segment(char *ptr, char *ptr_end,
 	if (ft_check_load(lc, ptr_end, &load))
 		return (NULL);
 	ft_init_seg_infos(seg_infos);
-	// if (ft_init_seg_infos(seg_infos))
-	// {
-	// 	free(seg_infos);
-	// 	return (NULL);
-	// }
 	i = 0;
 	index = 0;
 	while (i < swap_uint32_check(header->ncmds, load.is_indian))

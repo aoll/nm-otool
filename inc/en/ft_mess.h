@@ -13,6 +13,8 @@
 #ifndef FT_MESS_H
 # define FT_MESS_H
 
+# define BAD_STRING_INDEX	"bad string index"
+# define ERROR_STRING_INDEX	"Bad string index\n"
 # define UNKNOW				"unknow"
 # define CONTENT_TEXT_TEXT 	"Contents of (__TEXT,__text) section\n"
 # define ERROR_LOAD_MIN_SIZE	"Mach-O load command with size < 8 bytes\n"

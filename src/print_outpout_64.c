@@ -91,10 +91,10 @@ int			print_outpout_64(
 			+ swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);
 	else
 	{
-		if (type == 'U')
-			type = '?';
-		if (type >= 'a' && type <= 'z')
-			type = '?';
+		// if (type == 'U')
+		// 	type = '?';
+		// if (type >= 'a' && type <= 'z')
+		// 	type = '?';
 		print_outpout_format_64(
 			nlist, type, BAD_STRING_INDEX, cmd_f);
 	}

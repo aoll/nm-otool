@@ -97,13 +97,11 @@ static int	loop_sort64_reverse(
 			set_index64(&tmp, &index, i, list);
 		if (list[i])
 		{
-			cmp = ft_strncmp(is_bad_adresse(s, tmp->n_un.n_strx, ptr_end),
-				is_bad_adresse(s, list[i]->n_un.n_strx, ptr_end), 0);
+			cmp = ft_strcmp(is_bad_adresse(s, tmp->n_un.n_strx, ptr_end),
+				is_bad_adresse(s, list[i]->n_un.n_strx, ptr_end));
 			if (cmp < 0)
 				set_index64(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value < list[i]->n_value)
-				set_index64(&tmp, &index, i, list);
-			else if (!cmp)
 				set_index64(&tmp, &index, i, list);
 		}
 	}

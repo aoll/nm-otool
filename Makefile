@@ -11,11 +11,11 @@
 # **************************************************************************** #
 
 
-DEBUG=no
+DEBUG=yes
 CC=clang
 
 ifeq ($(DEBUG), yes)
-				CFLAGS= -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -O1 -g #-fsanitize=address -fno-omit-frame-pointer # -g -fsanitize=address,undefined # -g -ansi -pedantic
+				CFLAGS= -ggdb3 -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -O1 -g #-fsanitize=address -fno-omit-frame-pointer # -g -fsanitize=address,undefined # -g -ansi -pedantic
 else
 		# CFLAGS= -Wall -Wextra -Werror #-O1 -g #-fsanitize=address -fno-omit-frame-pointer
 		# CFLAGS= -shared -fPIC -Wall -Wextra -Werror

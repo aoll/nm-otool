@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:24:01 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 19:28:51 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 00:01:10 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int			print_outpout(
 		return (EXIT_SUCCESS);
 	if ((nlist->n_type & N_EXT) && type != '?')
 			type = ft_toupper(type);
-	if ((int)nlist->n_un.n_strx > -1)
+	if ((long)swap_uint32_check((int)nlist->n_un.n_strx, cmd_f->is_indian) > -1)
 		print_outpout_format(
 			nlist, type, stringtable
 			+ swap_uint32_check(nlist->n_un.n_strx, cmd_f->is_indian), cmd_f);

@@ -6,14 +6,14 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:29 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 19:08:11 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 00:09:20 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
 static int		loop_check_index(
-	struct nlist **list, int nsyms, char *stringtable, void *ptr_end)
+	struct nlist **list, int nsyms, char *stringtable, t_seg_infos *seg_infos)
 {
 	int					i;
 
@@ -22,8 +22,11 @@ static int		loop_check_index(
 	{
 		if (list[i])
 		{
-			if ((long)list[i]->n_un.n_strx < 0 ||
-				(void *)(stringtable + list[i]->n_un.n_strx) >= (void *)ptr_end)
+			if ((long)swap_uint32_check((long)list[i]->n_un.n_strx,
+			seg_infos->cmd_f->is_indian) < 0 ||
+			(void *)(stringtable + swap_uint32_check((long)list[i]->n_un.n_strx,
+			seg_infos->cmd_f->is_indian))
+				>= (void *)seg_infos->ptr_end)
 			{
 				ft_putstr_fd(ERROR_STRING_INDEX, STDERR);
 				return (EXIT_FAILURE);
@@ -43,10 +46,10 @@ static	int	sort_set_index(
 
 	if (seg_infos->cmd_f->r)
 		index = loop_sort_reverse(
-			list, nsyms, stringtable, seg_infos->ptr_end);
+			list, nsyms, stringtable, seg_infos);
 	else
 		index = loop_sort(
-			list, nsyms, stringtable, (void *)seg_infos->ptr_end);
+			list, nsyms, stringtable, seg_infos);
 	return (index);
 }
 
@@ -60,7 +63,7 @@ static int	sort_init_loop(
 	int	j;
 	int	index;
 
-	err = loop_check_index(list, nsyms, stringtable, seg_infos->ptr_end);
+	err = loop_check_index(list, nsyms, stringtable, seg_infos);
 	j = -1;
 	while (++j < nsyms)
 	{
@@ -68,9 +71,9 @@ static int	sort_init_loop(
 		if (!err)
 		{
 			if (!seg_infos->cmd_f->p)
-				index = sort_set_index(
-					list, nsyms, stringtable, seg_infos);
-			if ((void *)(stringtable + list[index]->n_un.n_strx)
+				index = sort_set_index(list, nsyms, stringtable, seg_infos);
+			if ((void *)(stringtable + swap_uint32_check(
+				(long)list[index]->n_un.n_strx, seg_infos->cmd_f->is_indian))
 			>= seg_infos->ptr_end)
 				list[index]->n_un.n_strx = -1;
 			print_outpout(

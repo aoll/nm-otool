@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 18:37:23 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 18:43:04 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 00:12:23 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,9 @@ static void	set_index64(
 	*index = i;
 }
 
-static char	*is_bad_adresse(char *s, long offset, void *ptr_end)
-{
-	if (offset < 0 || (void *)(s + offset) >= (void *)ptr_end)
-	{
-		return (BAD_STRING_INDEX);
-	}
-	return ((s + offset));
-}
-
 int			loop_sort64(
-	struct nlist_64 **list, int nsyms, char *stringtable, void *ptr_end)
+	struct nlist_64 **list, int nsyms, char *stringtable,
+	t_seg_infos *seg_infos)
 {
 	struct nlist_64		*tmp;
 	int					i;
@@ -46,8 +38,8 @@ int			loop_sort64(
 		if (list[i] && tmp)
 		{
 			cmp = ft_strcmp(is_bad_adresse(
-				stringtable, tmp->n_un.n_strx, ptr_end),
-				is_bad_adresse(stringtable, list[i]->n_un.n_strx, ptr_end));
+				stringtable, tmp->n_un.n_strx, seg_infos),
+					is_bad_adresse(stringtable, list[i]->n_un.n_strx, seg_infos));
 			if (cmp > 0)
 				set_index64(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value > list[i]->n_value)
@@ -58,7 +50,7 @@ int			loop_sort64(
 }
 
 int			loop_sort64_reverse(
-	struct nlist_64 **list, int nsyms, char *s, void *ptr_end)
+	struct nlist_64 **list, int nsyms, char *s, t_seg_infos *seg_infos)
 {
 	struct nlist_64		*tmp;
 	int					i;
@@ -75,8 +67,8 @@ int			loop_sort64_reverse(
 			set_index64(&tmp, &index, i, list);
 		if (list[i])
 		{
-			cmp = ft_strcmp(is_bad_adresse(s, tmp->n_un.n_strx, ptr_end),
-				is_bad_adresse(s, list[i]->n_un.n_strx, ptr_end));
+			cmp = ft_strcmp(is_bad_adresse(s, tmp->n_un.n_strx, seg_infos),
+				is_bad_adresse(s, list[i]->n_un.n_strx, seg_infos));
 			if (cmp < 0)
 				set_index64(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value < list[i]->n_value)

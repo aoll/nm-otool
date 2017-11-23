@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 00:12:57 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:22:37 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,9 @@ int							print_outpout_64(
 	struct nlist_64 *nlist, char *stringtable,
 	t_seg_infos *seg_infos, t_cmd_flag *cmd_flag);
 struct nlist_64				**ft_copy_nlist64(
-	struct nlist_64 *array, int nsyms);
+	struct nlist_64 *array, int nsyms, t_seg_infos *seg_infos);
 struct nlist				**ft_copy_nlist(
-	struct nlist *array, int nsyms);
+	struct nlist *array, int nsyms, t_seg_infos *seg_infos);
 int							ft_sort64(struct nlist_64 *array, int nsyms,
 	char *stringtable, t_seg_infos *seg_infos);
 int							ft_sort(

@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:46 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:22:47 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:45:50 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,5 @@ int	handle_64_text(char *ptr, char *ptr_end, char *av, int is_indian)
 		(void*)ptr + swap_uint32_check(section->offset, is_indian)
 		, section->addr,
 		swap_uint32_check(section->size, is_indian), &ptr_infos);
-	// print_text_text_section(
-		// (void*)ptr + section->offset, section->addr, section->size, 1);
 	return (EXIT_SUCCESS);
 }

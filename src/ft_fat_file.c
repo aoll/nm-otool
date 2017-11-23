@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:20:03 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:33:40 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 00:55:02 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,9 @@ static int	ft_fat_file_all(
 		if (ft_print_arch_name(av, ptr + f_i.offset, ptr_end, cmd_f->is_otool))
 			return (EXIT_FAILURE);
 		ft_otool(ptr + f_i.offset, ptr_end, NULL, cmd_f);
-		f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a);
+		if ((void *)(f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a))
+		+ sizeof(t_fat_infos) > (void *)ptr_end)
+			return (EXIT_FAILURE);
 		f_i.nb_arch--;
 	}
 	return (EXIT_SUCCESS);
@@ -97,7 +99,9 @@ int			ft_fat_file(
 			if (offset >= 0)
 				return (ft_otool(ptr + offset, ptr_end, av, cmd_f));
 		}
-		f_a = (void *)f_a + sizeof(*f_a);
+		if ((void *)(f_a = (void *)f_a + sizeof(*f_a)) + sizeof(*f_a)
+		> (void *)ptr_end)
+			return (EXIT_FAILURE);
 		nb_arch--;
 	}
 	return (ft_fat_file_all(ptr, ptr_end, av, cmd_f));

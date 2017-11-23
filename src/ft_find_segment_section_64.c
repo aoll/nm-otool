@@ -6,13 +6,14 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:20:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:33:57 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 00:56:19 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-static int			check_load(struct mach_header_64 *header, t_ptr *ptr_infos, struct load_command *lc)
+static int			check_load(struct mach_header_64 *header,
+	t_ptr *ptr_infos, struct load_command *lc)
 {
 	t_load						load;
 

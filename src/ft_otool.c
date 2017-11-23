@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:21:53 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:21:54 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:14:12 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int					ft_otool(
 {
 	unsigned int magic_number;
 
-	if (ptr >= ptr_end)
+	if (ptr >= ptr_end || (size_t)ptr_end - (size_t)ptr < 8)
 		return (ft_loop_error(av));
 	magic_number = set_magic_number(*(int *)ptr, cmd_f);
 	if (magic_number == MH_MAGIC)

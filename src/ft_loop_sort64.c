@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/22 18:37:23 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 00:12:23 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:12:59 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int			loop_sort64(
 		{
 			cmp = ft_strcmp(is_bad_adresse(
 				stringtable, tmp->n_un.n_strx, seg_infos),
-					is_bad_adresse(stringtable, list[i]->n_un.n_strx, seg_infos));
+				is_bad_adresse(stringtable, list[i]->n_un.n_strx, seg_infos));
 			if (cmp > 0)
 				set_index64(&tmp, &index, i, list);
 			else if (!cmp && tmp->n_value > list[i]->n_value)

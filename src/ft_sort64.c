@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:40 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 00:10:07 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:22:00 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int			ft_sort64(
 	int					j;
 	int					err;
 
-	if (!(list = ft_copy_nlist64(array, nsyms)))
+	if (!(list = ft_copy_nlist64(array, nsyms, seg_infos)))
 		return (EXIT_FAILURE);
 	err = sort64_init_loop(
 		list, nsyms, stringtable, seg_infos);

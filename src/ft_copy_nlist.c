@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:19:49 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:31:58 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:39:23 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ static void		ft_set_nlist(struct nlist *l, struct nlist *array, int i)
 	l->n_un.n_strx = array[i].n_un.n_strx;
 }
 
-struct nlist	**ft_copy_nlist(struct nlist *array, int nsyms)
+struct nlist	**ft_copy_nlist(
+	struct nlist *array, int nsyms, t_seg_infos *seg_infos)
 {
 	struct nlist	**list;
 	struct nlist	*l;
@@ -31,7 +32,9 @@ struct nlist	**ft_copy_nlist(struct nlist *array, int nsyms)
 	i = 0;
 	while (i < nsyms)
 	{
-		if (!(l = malloc(sizeof(struct nlist))))
+		if (!(l = malloc(sizeof(struct nlist)))
+		|| (void *)((void *)array + (i * sizeof(*l))) + sizeof(*l)
+		> seg_infos->ptr_end)
 		{
 			while (--i >= 0)
 				free(list[i]);

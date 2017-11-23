@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:23 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:22:24 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:16:06 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	ft_print_padding_adresse(
 {
 	char	*addr_str;
 
-	// printf("addr %llu\n", addr);
 	addr_str = ft_strdup(padding);
 	if (addr > 0)
 		ft_get_adress_str(addr, &addr_str, len_padding - 1);

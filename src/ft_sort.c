@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:29 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 00:09:20 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:22:10 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int			ft_sort(
 	int					j;
 	int					err;
 
-	if (!(list = ft_copy_nlist(array, nsyms)))
+	if (!(list = ft_copy_nlist(array, nsyms, seg_infos)))
 		return (EXIT_FAILURE);
 	err = sort_init_loop(
 		list, nsyms, stringtable, seg_infos);

@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:24:10 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 19:45:53 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/23 15:58:46 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@ static void	print_chariot(int j)
 		write(1, "\n", 1);
 }
 
-static void	print_infos(char *ptr, t_ptr *ptr_infos, int j)
+static void	print_infos(char *ptr, t_ptr *ptr_infos, int *j)
 {
 	if (*(unsigned char *)ptr < 0x10)
 		write(1, "0", 1);
 	ft_print_adress(*(unsigned char *)ptr);
 	if (!ptr_infos->is_indian)
 		write(1, " ", 1);
-	if (++j % 4 == 0 && ptr_infos->is_indian)
+	if (++(*j) % 4 == 0 && ptr_infos->is_indian)
 		write(1, " ", 1);
-	if (j % 16 == 0)
+	if (*j % 16 == 0)
 		write(1, "\n", 1);
 }
 
@@ -48,7 +48,7 @@ int			print_text_text_section(
 				addr, len, ptr_infos->is_64 ? PADDING_STR_64 : PADDING_STR);
 			write(1, "\t", 1);
 		}
-		print_infos(ptr, ptr_infos, j);
+		print_infos(ptr, ptr_infos, &j);
 		addr++;
 		ptr++;
 	}

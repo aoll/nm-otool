@@ -6,23 +6,23 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:20:28 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 13:11:38 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:44:07 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-static int					ret_err(void)
+static int						ret_err(void)
 {
 	ft_putstr_fd(BAD_OJECT, STDERR);
 	return (EXIT_FAILURE);
 }
 
-static int					check_segment(
+static int						check_segment(
 	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos)
 {
-	struct segment_command_64	*seg;
-	int							i;
+	struct segment_command_64		*seg;
+	int								i;
 
 	i = -1;
 	while (++i < ncmds)
@@ -46,11 +46,11 @@ static int					check_segment(
 	return (EXIT_SUCCESS);
 }
 
-struct segment_command_64	*ft_find_segment_64(
+struct segment_command_64		*ft_find_segment_64(
 	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos)
 {
-	struct segment_command_64	*seg;
-	int							i;
+	struct segment_command_64		*seg;
+	int								i;
 
 	if (check_segment(lc, ncmds, segment_name, ptr_infos))
 		return (NULL);
@@ -68,8 +68,8 @@ struct segment_command_64	*ft_find_segment_64(
 		}
 		if (i + 1 < ncmds)
 			if ((void *)(lc = (void *)lc
-			+ swap_uint32_check(lc->cmdsize, ptr_infos->is_indian)) + sizeof(*lc)
-			> (void *)ptr_infos->ptr_end)
+			+ swap_uint32_check(lc->cmdsize, ptr_infos->is_indian))
+			+ sizeof(*lc) > (void *)ptr_infos->ptr_end)
 				return (NULL);
 	}
 	return (seg);

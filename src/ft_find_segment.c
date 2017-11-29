@@ -6,11 +6,12 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:21:09 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 13:05:43 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:38:31 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
+
 static int					ret_err(void)
 {
 	ft_putstr_fd(BAD_OJECT, STDERR);
@@ -20,7 +21,7 @@ static int					ret_err(void)
 static int					check_segment(
 	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos)
 {
-	struct segment_command	*seg;
+	struct segment_command		*seg;
 	int							i;
 
 	i = -1;
@@ -45,10 +46,10 @@ static int					check_segment(
 	return (EXIT_SUCCESS);
 }
 
-struct segment_command	*ft_find_segment(
+struct segment_command		*ft_find_segment(
 	struct load_command *lc, int ncmds, char *segment_name, t_ptr *ptr_infos)
 {
-	struct segment_command	*seg;
+	struct segment_command		*seg;
 	int							i;
 
 	if (check_segment(lc, ncmds, segment_name, ptr_infos))

@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:29 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 15:22:10 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:49:17 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int		loop_check_index(
 	return (EXIT_SUCCESS);
 }
 
-static	int	sort_set_index(
+static int		sort_set_index(
 	struct nlist **list,
 	int nsyms,
 	char *stringtable,
@@ -53,7 +53,7 @@ static	int	sort_set_index(
 	return (index);
 }
 
-static int	sort_init_loop(
+static int		sort_init_loop(
 	struct nlist **list,
 	int nsyms,
 	char *stringtable,
@@ -85,7 +85,7 @@ static int	sort_init_loop(
 	return (err);
 }
 
-int			ft_sort(
+int				ft_sort(
 	struct nlist *array, int nsyms,
 	char *stringtable, t_seg_infos *seg_infos)
 {

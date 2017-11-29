@@ -6,12 +6,11 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:40 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 15:22:00 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:48:02 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
-
 
 static int		loop_check_index64(
 	struct nlist_64 **list, int nsyms,
@@ -38,7 +37,7 @@ static int		loop_check_index64(
 	return (EXIT_SUCCESS);
 }
 
-static	int	sort64_set_index(
+static int		sort64_set_index(
 	struct nlist_64 **list,
 	int nsyms,
 	char *stringtable,
@@ -55,7 +54,7 @@ static	int	sort64_set_index(
 	return (index);
 }
 
-static int	sort64_init_loop(
+static int		sort64_init_loop(
 	struct nlist_64 **list,
 	int nsyms,
 	char *stringtable,
@@ -88,7 +87,7 @@ static int	sort64_init_loop(
 	return (err);
 }
 
-int			ft_sort64(
+int				ft_sort64(
 	struct nlist_64 *array, int nsyms,
 	char *stringtable, t_seg_infos *seg_infos)
 {

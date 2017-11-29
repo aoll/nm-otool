@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:23:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 18:52:44 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:51:20 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int			print_outpout_64(
 	if (cmd_f->g && !(nlist->n_type & N_EXT))
 		return (EXIT_SUCCESS);
 	if ((nlist->n_type & N_EXT) && type != '?')
-			type = ft_toupper(type);
+		type = ft_toupper(type);
 	if ((int)nlist->n_un.n_strx > -1)
 		print_outpout_format_64(
 			nlist, type, stringtable

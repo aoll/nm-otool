@@ -6,17 +6,18 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:21:39 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 15:10:55 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:46:50 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
+
 static int		loop_segment(
 	struct load_command *lc, int *index, t_seg_infos *seg_infos, t_load *load)
 {
 	struct segment_command	*segment;
 	struct section			*section;
-	uint32_t					loop;
+	uint32_t				loop;
 
 	if ((void *)(segment = (struct segment_command *)lc)
 	+ sizeof(struct segment_command) > load->ptr_end)
@@ -67,9 +68,9 @@ t_load *load, t_seg_infos *seg_infos)
 		if ((void *)(lc = (void *)lc
 			+ swap_uint32_check(lc->cmdsize, load->is_indian))
 			+ sizeof(struct load_command) > (void *)load->ptr_end)
-			{
-				return (EXIT_FAILURE);
-			}
+		{
+			return (EXIT_FAILURE);
+		}
 	}
 	return (EXIT_SUCCESS);
 }

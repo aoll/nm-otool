@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:21:30 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 15:10:04 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:47:14 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ t_load *load, t_seg_infos *seg_infos)
 		if ((void *)(lc = (void *)lc
 			+ swap_uint32_check(lc->cmdsize, load->is_indian))
 			+ sizeof(struct load_command) > (void *)load->ptr_end)
-			{
-				return (EXIT_FAILURE);
-			}
+		{
+			return (EXIT_FAILURE);
+		}
 	}
 	return (EXIT_SUCCESS);
 }

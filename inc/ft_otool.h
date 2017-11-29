@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 11:45:33 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 14:09:24 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,7 @@
 # define IS_OTOOL			1
 # define IS_NM				0
 
-typedef struct s_cmd_flag	t_cmd_flag;
-
-struct						s_cmd_flag
+typedef struct				s_cmd_flag
 {
 	int						is_indian;
 	int						is_otool;
@@ -50,11 +48,9 @@ struct						s_cmd_flag
 	int						g;
 	int						j;
 	int						r;
-};
+}							t_cmd_flag;
 
-typedef struct s_seg_infos	t_seg_infos;
-
-struct						s_seg_infos
+typedef struct				s_seg_infos
 {
 	t_cmd_flag				*cmd_f;
 	int						text_nsect;
@@ -62,20 +58,18 @@ struct						s_seg_infos
 	int						bss_nsect;
 	void					*ptr;
 	void					*ptr_end;
-};
+}							t_seg_infos;
 
-typedef struct s_fat_infos	t_fat_infos;
-
-struct						s_fat_infos
+typedef struct				s_fat_infos
 {
 	struct fat_header		*f_h;
 	struct fat_arch			*f_a;
 	int						nb_arch;
 	int						offset;
 	char					*s;
-};
+}							t_fat_infos;
 
-typedef struct s_load
+typedef struct				s_load
 {
 	int						ncmds;
 	int						sizeofcmds;
@@ -83,15 +77,15 @@ typedef struct s_load
 	void					*ptr;
 	void					*ptr_end;
 
-} t_load;
+}							t_load;
 
-typedef struct s_ptr
+typedef struct				s_ptr
 {
 	char					*ptr;
 	char					*ptr_end;
 	int						is_indian;
 	int						is_64;
-} t_ptr;
+}							t_ptr;
 
 char						*is_bad_adresse(
 	char *s, long offset, t_seg_infos *seg_infos);
@@ -105,7 +99,7 @@ int							loop_sort64_reverse(
 int							loop_sort64(
 	struct nlist_64 **list, int nsyms, char *stringtable,
 	t_seg_infos *seg_infos);
-long					swap_uint32_check(long val, int is_indian);
+long						swap_uint32_check(long val, int is_indian);
 int							set_cmd_flag(
 	int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
 int							print_outpout_format(

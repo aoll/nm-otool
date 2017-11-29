@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:20:03 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 11:20:57 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:46:15 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,28 +111,24 @@ int			ft_fat_file(
 	struct fat_header	*f_h;
 	struct fat_arch		*f_a;
 	int					nb_arch;
-	int					offset;
 
-	if ((void *)(f_h = (struct fat_header *)ptr) + sizeof(struct fat_header)
-		>= (void *)ptr_end)
+	if ((void *)(f_h = (void *)ptr) + sizeof(*f_h) >= (void *)ptr_end)
 		return (EXIT_FAILURE);
-	nb_arch = swap_uint32(f_h->nfat_arch);
+	nb_arch = swap_uint32(f_h->nfat_arch) + 1;
 	if ((void *)(f_a = (void *)f_h + sizeof(*f_h))
 	+ sizeof(*f_a) >= (void *)ptr_end)
 		return (EXIT_FAILURE);
-	offset = 0;
-	while (nb_arch)
+	while (--nb_arch)
 	{
 		if (swap_uint32(f_a->cputype) == CPU_TYPE_X86_64)
 		{
-			offset = swap_uint32(f_a->offset);
-			if (offset >= 0)
-				return (ft_otool(ptr + offset, ptr_end, av, cmd_f));
+			if ((long)swap_uint32(f_a->offset) >= 0)
+				return (ft_otool(ptr + swap_uint32(f_a->offset),
+				ptr_end, av, cmd_f));
 		}
 		if ((void *)(f_a = (void *)f_a + sizeof(*f_a)) + sizeof(*f_a)
 		> (void *)ptr_end)
 			return (EXIT_FAILURE);
-		nb_arch--;
 	}
 	if ((nb_arch = swap_uint32(f_h->nfat_arch)) == 1)
 		return (ft_fat_file_all_one(ptr, ptr_end, av, cmd_f));

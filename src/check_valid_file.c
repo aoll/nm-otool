@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:19:16 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 16:19:22 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 14:30:18 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	check_valid_file(char *ptr, char *ptr_end)
 	{
 		return (EXIT_SUCCESS);
 	}
-	else if (!strncmp(ptr, ARMAG, SARMAG))
+	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 	{
 		return (EXIT_SUCCESS);
 	}

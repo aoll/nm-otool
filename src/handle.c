@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:23:09 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/22 21:16:06 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:49:56 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int			loop_handle(char *ptr, char *ptr_end,
 	return (free_seg_infos(&seg_infos, EXIT_SUCCESS));
 }
 
-int			handle(char *ptr, char *ptr_end, t_cmd_flag *cmd_f)
+int					handle(char *ptr, char *ptr_end, t_cmd_flag *cmd_f)
 {
 	struct mach_header	*header;
 

@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:19:29 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 00:48:20 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:27:17 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int			ft_ar_file(char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 
 	if ((void *)
 	(ar = (void *)ptr + SARMAG) + sizeof(struct ar_hdr) + sizeof(*ar)
-	 > (void *)ptr_end)
+	> (void *)ptr_end)
 		return (EXIT_FAILURE);
 	if (cmd_f->is_otool)
 		ft_print_archive_name("Archive : ", av);

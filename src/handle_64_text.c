@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:22:46 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 13:11:21 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:49:46 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	print_name(char *av)
 	}
 }
 
-int	handle_64_text(char *ptr, char *ptr_end, char *av, int is_indian)
+int			handle_64_text(char *ptr, char *ptr_end, char *av, int is_indian)
 {
 	struct mach_header_64		*header;
 	struct section_64			*section;

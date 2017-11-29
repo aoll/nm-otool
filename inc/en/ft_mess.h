@@ -6,13 +6,14 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:43 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 17:05:20 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:19:06 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_MESS_H
 # define FT_MESS_H
 
+# define BAD_OJECT			"Truncated or malformed object\n"
 # define BAD_STRING_INDEX	"bad string index"
 # define ERROR_STRING_INDEX	"Bad string index\n"
 # define UNKNOW				"unknow"
@@ -20,7 +21,7 @@
 # define ERROR_LOAD_MIN_SIZE	"Mach-O load command with size < 8 bytes\n"
 # define ERROR_LOAD_SIZE	"Mach-O segment load command size is too small\n"
 # define FOR_ARCH		"for architecture"
-# define ERROR_FORMAT "The file was not recognized as a valid object file\n"
+# define ERROR_FORMAT "is not an object file\n"
 # define ERROR_FORMAT_FILE ERROR_FORMAT
 # define NO_ACCESS			"No access to : "
 # define ERROR_FLAG			"ft_nm: Unknown command line argument"

@@ -6,18 +6,18 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:21:53 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 15:14:12 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 13:22:41 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_otool.h"
 
-static int			ft_loop_error(char *av)
+static int			ft_loop_error(char *av, int is_otool)
 {
-	ft_putstr_fd(av, STDERR);
-	ft_putstr_fd(": ", STDERR);
-	ft_putstr_fd(ERROR_FORMAT_FILE, STDERR);
-	return (EXIT_FAILURE);
+	ft_putstr_fd(av, is_otool ? STDOUT : STDERR);
+	ft_putstr_fd(": ", is_otool ? STDOUT : STDERR);
+	ft_putstr_fd(ERROR_FORMAT_FILE, is_otool ? STDOUT : STDERR);
+	return (is_otool ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 static unsigned int	set_magic_number(
@@ -41,7 +41,7 @@ int					ft_otool(
 	unsigned int magic_number;
 
 	if (ptr >= ptr_end || (size_t)ptr_end - (size_t)ptr < 8)
-		return (ft_loop_error(av));
+		return (ft_loop_error(av, cmd_f->is_otool));
 	magic_number = set_magic_number(*(int *)ptr, cmd_f);
 	if (magic_number == MH_MAGIC)
 		if (cmd_f->is_otool)
@@ -57,5 +57,5 @@ int					ft_otool(
 		return (ft_fat_file(ptr, ptr_end, av, cmd_f));
 	else if (!ft_strncmp(ptr, ARMAG, SARMAG))
 		return (ft_ar_file(ptr, ptr_end, av, cmd_f));
-	return (ft_loop_error(av));
+	return (ft_loop_error(av, cmd_f->is_otool));
 }

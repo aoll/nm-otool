@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 15:22:37 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 11:45:33 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int							loop_sort64_reverse(
 int							loop_sort64(
 	struct nlist_64 **list, int nsyms, char *stringtable,
 	t_seg_infos *seg_infos);
-uint32_t					swap_uint32_check(uint32_t val, int is_indian);
+long					swap_uint32_check(long val, int is_indian);
 int							set_cmd_flag(
 	int ac, char **av, t_cmd_flag *cmd_f, int is_otool);
 int							print_outpout_format(

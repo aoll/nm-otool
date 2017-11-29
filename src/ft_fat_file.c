@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:20:03 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/23 00:55:02 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 11:20:57 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,32 @@ static int	ft_fat_file_all(
 	return (EXIT_SUCCESS);
 }
 
+static int	ft_fat_file_all_one(
+	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
+{
+	t_fat_infos f_i;
+
+	f_i.f_h = (struct fat_header *)ptr;
+	f_i.nb_arch = swap_uint32(f_i.f_h->nfat_arch);
+	f_i.f_a = (void *)f_i.f_h + sizeof(*f_i.f_h);
+	f_i.offset = 0;
+	while (f_i.nb_arch)
+	{
+		f_i.offset = swap_uint32(f_i.f_a->offset);
+		if (!cmd_f->is_otool)
+		{
+			ft_putstr(av);
+			ft_putstr(":\n");
+		}
+		ft_otool(ptr + f_i.offset, ptr_end, av, cmd_f);
+		if ((void *)(f_i.f_a = (void *)f_i.f_a + sizeof(*f_i.f_a))
+		+ sizeof(t_fat_infos) > (void *)ptr_end)
+			return (EXIT_FAILURE);
+		f_i.nb_arch--;
+	}
+	return (EXIT_SUCCESS);
+}
+
 int			ft_fat_file(
 	char *ptr, char *ptr_end, char *av, t_cmd_flag *cmd_f)
 {
@@ -87,9 +113,13 @@ int			ft_fat_file(
 	int					nb_arch;
 	int					offset;
 
-	f_h = (struct fat_header *)ptr;
+	if ((void *)(f_h = (struct fat_header *)ptr) + sizeof(struct fat_header)
+		>= (void *)ptr_end)
+		return (EXIT_FAILURE);
 	nb_arch = swap_uint32(f_h->nfat_arch);
-	f_a = (void *)f_h + sizeof(*f_h);
+	if ((void *)(f_a = (void *)f_h + sizeof(*f_h))
+	+ sizeof(*f_a) >= (void *)ptr_end)
+		return (EXIT_FAILURE);
 	offset = 0;
 	while (nb_arch)
 	{
@@ -104,5 +134,7 @@ int			ft_fat_file(
 			return (EXIT_FAILURE);
 		nb_arch--;
 	}
+	if ((nb_arch = swap_uint32(f_h->nfat_arch)) == 1)
+		return (ft_fat_file_all_one(ptr, ptr_end, av, cmd_f));
 	return (ft_fat_file_all(ptr, ptr_end, av, cmd_f));
 }

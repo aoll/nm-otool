@@ -6,13 +6,16 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:56 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/07 17:02:21 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/29 14:36:44 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_MESS_H
 # define FT_MESS_H
 
+# define BAD_OJECT			"Objet tronque ou malforme\n"
+# define BAD_STRING_INDEX	"mauvais index pour la chaine de caractere"
+# define ERROR_STRING_INDEX	"Mauvais index pour la chaine de caractere\n"
 # define UNKNOW				"inconnu"
 # define FOR_ARCH		"pour architecture"
 # define CONTENT_TEXT_TEXT 	"Contenu de (__TEXT,__text) section\n"
